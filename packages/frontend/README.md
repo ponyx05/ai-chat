@@ -30,12 +30,6 @@ frontend/
 ## 开发命令
 
 ```bash
-# 安装依赖
-pnpm install
-
-# 启动开发服务器
-pnpm dev
-
 # 构建生产版本
 pnpm build
 
@@ -46,4 +40,4 @@ pnpm preview
 ## 注意事项
 
 - 开发服务器默认运行在 http://localhost:3000
-- API 请求已配置代理到后端 /api/*
+- API 请求已配置代理到后端 /api/\*

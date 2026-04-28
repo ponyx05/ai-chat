@@ -5,23 +5,21 @@ const message = ref('Hello from Vue!')
 </script>
 
 <template>
-  <el-container class="container">
-    <el-header>
+  <a-layout class="container">
+    <a-layout-header>
       <h1>AI Chat</h1>
-    </el-header>
-    <el-main>
-      <el-card class="card">
-        <template #header>
-          <div class="card-header">
-            <span>Welcome</span>
-          </div>
+    </a-layout-header>
+    <a-layout-content>
+      <a-card class="card" :headStyle="{ fontWeight: 'bold' }">
+        <template #title>
+          <div class="card-header">Welcome</div>
         </template>
         <div class="card-content">
-          <el-tag type="success">{{ message }}</el-tag>
+          <a-tag color="success">{{ message }}</a-tag>
         </div>
-      </el-card>
-    </el-main>
-  </el-container>
+      </a-card>
+    </a-layout-content>
+  </a-layout>
 </template>
 
 <style scoped>
@@ -29,13 +27,13 @@ const message = ref('Hello from Vue!')
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
-.el-header {
+.ant-layout-header {
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
 }
-.el-header h1 {
+.ant-layout-header h1 {
   color: white;
   margin: 0;
   font-size: 24px;

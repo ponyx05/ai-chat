@@ -20,19 +20,15 @@ backend/
     ├── index.ts            # 入口文件
     ├── config/
     │   └── database.ts     # 数据库配置
-    └── routes/
-        └── hello.ts        # 示例路由
+    ├── routes/
+    │   └── hello.ts        # 示例路由
+    └── store/
+        └── db_test.ts      # 数据库连接测试
 ```
 
 ## 开发命令
 
 ```bash
-# 安装依赖
-pnpm install
-
-# 启动开发服务器
-pnpm dev
-
 # 构建生产版本
 pnpm build
 
@@ -44,13 +40,13 @@ pnpm start
 
 通过环境变量配置：
 
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| DB_HOST | localhost | 数据库主机 |
-| DB_PORT | 3306 | 数据库端口 |
-| DB_USER | root | 数据库用户名 |
-| DB_PASSWORD | (空) | 数据库密码 |
-| DB_NAME | ai_chat | 数据库名 |
+| 变量        | 默认值    | 说明         |
+| ----------- | --------- | ------------ |
+| DB_HOST     | localhost | 数据库主机   |
+| DB_PORT     | 3306      | 数据库端口   |
+| DB_USER     | root      | 数据库用户名 |
+| DB_PASSWORD | (空)      | 数据库密码   |
+| DB_NAME     | ai_chat   | 数据库名     |
 
 ## 注意事项
 
