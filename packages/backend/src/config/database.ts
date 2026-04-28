@@ -3,5 +3,5 @@ export const dbConfig = {
   port: Number(process.env.DB_PORT) || 3306,
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "123456",
-  database: process.env.DB_NAME || "ai-chat-db",
+  database: process.env.DB_NAME || "ai_chat_db",
 };
