@@ -1,15 +1,18 @@
 # Backend
 
-后端子工程，基于 Express + MySQL + TypeScript
+后端子工程，基于 Express + MySQL + TypeScript 构建的 AI 聊天应用后端 API 服务。
 
 ## 技术栈
 
-- **运行时**: Node.js
-- **框架**: Express
-- **数据库**: MySQL
-- **数据库驱动**: mysql2
-- **认证**: JWT (jsonwebtoken), bcryptjs
-- **语言**: TypeScript
+| 技术 | 说明 |
+| ---- | ---- |
+| Node.js | 运行时 |
+| Express | Web 框架 |
+| MySQL | 关系型数据库 |
+| mysql2 | 数据库驱动 |
+| JWT | Token 认证 |
+| bcryptjs | 密码加密 |
+| TypeScript | 类型安全 |
 
 ## 目录结构
 
@@ -20,35 +23,39 @@ packages/backend/
 └── src/
     ├── index.ts            # 启动入口
     ├── app.ts              # Express 应用入口
-    ├── config/
-    │   └── database.ts     # 数据库配置
-    ├── middleware/
-    │   ├── auth.ts         # JWT 认证中间件
-    │   └── errorHandler.ts # 统一错误处理
-    ├── models/
-    │   ├── user.ts         # 用户模型
-    │   ├── token.ts        # Token 模型
-    │   └── index.ts        # 统一导出
-    ├── routes/
-    │   ├── auth.ts         # 认证路由 (注册/登录/登出/当前用户)
-    │   ├── users.ts        # 用户路由 (修改密码)
-    │   ├── hello.ts        # 示例路由
-    │   └── index.ts        # 统一导出
-    ├── services/
-    │   ├── authService.ts  # 认证业务逻辑
-    │   ├── userService.ts  # 用户业务逻辑
-    │   └── index.ts        # 统一导出
-    ├── types/
-    │   └── index.ts        # TypeScript 类型定义
-    └── utils/
-        ├── jwt.ts          # JWT 工具
-        ├── password.ts     # 密码加密
-        └── index.ts        # 统一导出
+    ├── config/             # 配置
+    │   ├── database.ts     # 数据库配置
+    │   └── test.ts         # 测试配置
+    ├── middleware/          # 中间件
+    │   ├── auth.ts          # JWT 认证中间件
+    │   └── errorHandler.ts  # 统一错误处理
+    ├── models/              # 数据模型
+    │   ├── user.ts          # 用户模型
+    │   ├── token.ts         # Token 模型
+    │   └── index.ts         # 统一导出
+    ├── routes/              # 路由
+    │   ├── auth.ts          # 认证路由 (注册/登录/登出/当前用户)
+    │   ├── users.ts         # 用户路由 (修改密码)
+    │   ├── hello.ts         # 示例路由
+    │   └── index.ts         # 统一导出
+    ├── services/            # 业务逻辑
+    │   ├── authService.ts   # 认证业务逻辑
+    │   ├── userService.ts   # 用户业务逻辑
+    │   └── index.ts         # 统一导出
+    ├── types/               # 类型定义
+    │   └── index.ts         # TypeScript 类型定义
+    └── utils/               # 工具函数
+        ├── jwt.ts           # JWT 工具
+        ├── password.ts      # 密码加密
+        └── index.ts         # 统一导出
 ```
 
 ## 开发命令
 
 ```bash
+# 安装依赖
+pnpm install
+
 # 开发模式 (热重载)
 pnpm dev
 

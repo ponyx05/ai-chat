@@ -1,16 +1,18 @@
 # Frontend
 
-前端子工程，基于 Vue3 + Ant Design Vue + TypeScript + Vite
+前端子工程，基于 Vue3 + Ant Design Vue + TypeScript + Vite 构建的 AI 聊天应用前端。
 
 ## 技术栈
 
-- **构建工具**: Vite 6
-- **框架**: Vue 3
-- **UI 组件库**: Ant Design Vue 4
-- **状态管理**: Pinia
-- **路由**: Vue Router
-- **HTTP 客户端**: Axios
-- **语言**: TypeScript
+| 技术 | 说明 |
+| ---- | ---- |
+| Vite 6 | 构建工具 |
+| Vue 3 | 渐进式前端框架 |
+| Ant Design Vue 4 | UI 组件库 |
+| Pinia | 状态管理 |
+| Vue Router | 路由管理 |
+| Axios | HTTP 客户端 |
+| TypeScript | 类型安全 |
 
 ## 目录结构
 
@@ -25,31 +27,34 @@ packages/frontend/
     ├── main.ts              # 入口文件
     ├── App.vue              # 根组件
     ├── env.d.ts             # Vue 类型声明
-    ├── apis/
-    │   ├── request.ts      # axios 封装
-    │   ├── auth.ts         # 认证 API
-    │   ├── user.ts         # 用户 API
-    │   └── index.ts        # 统一导出
-    ├── components/
+    ├── apis/                # API 接口层
+    │   ├── request.ts       # axios 封装
+    │   ├── auth.ts          # 认证 API
+    │   ├── user.ts          # 用户 API
+    │   └── index.ts         # 统一导出
+    ├── components/          # 公共组件
     │   └── HelloWorld.vue   # 示例组件
-    ├── pages/
-    │   ├── Login.vue       # 登录页
-    │   ├── Register.vue    # 注册页
-    │   ├── Home.vue        # 首页
+    ├── pages/               # 页面组件
+    │   ├── Login.vue        # 登录页
+    │   ├── Register.vue     # 注册页
+    │   ├── Home.vue         # 首页
     │   └── ChangePassword.vue  # 修改密码页
-    ├── router/
-    │   └── index.ts        # 路由配置 + 守卫
-    ├── store/
-    │   ├── auth.ts         # 认证状态管理
-    │   └── index.ts        # 统一导出
-    └── utils/
-        ├── storage.ts      # 本地存储工具
-        └── index.ts        # 统一导出
+    ├── router/              # 路由配置
+    │   └── index.ts         # 路由配置 + 守卫
+    ├── store/               # 状态管理
+    │   ├── auth.ts          # 认证状态管理
+    │   └── index.ts         # 统一导出
+    └── utils/               # 工具函数
+        ├── storage.ts       # 本地存储工具
+        └── index.ts         # 统一导出
 ```
 
 ## 开发命令
 
 ```bash
+# 安装依赖
+pnpm install
+
 # 开发模式 (热重载)
 pnpm dev
 
