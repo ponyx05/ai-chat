@@ -32,6 +32,6 @@ coverage/
 .cache/
 .eslintcache
 
-docs/
+.docs
 .temp
 .worktrees
