@@ -31,8 +31,6 @@ const handleSubmit = async () => {
     })
     message.success('密码修改成功')
     router.push('/home')
-  } catch (err: any) {
-    message.error(err.message || '密码修改失败')
   } finally {
     loading.value = false
   }

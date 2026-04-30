@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import ErrorProvider from './components/ErrorProvider.vue'
 </script>
 
 <template>
-  <router-view />
+  <ErrorProvider>
+    <router-view />
+  </ErrorProvider>
 </template>
 
 <style>

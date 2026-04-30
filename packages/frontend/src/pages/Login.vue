@@ -25,8 +25,6 @@ const handleSubmit = async () => {
     await authStore.login(formState.value.username, formState.value.password)
     message.success('登录成功')
     router.push('/home')
-  } catch (err: any) {
-    message.error(err.message || '登录失败')
   } finally {
     loading.value = false
   }

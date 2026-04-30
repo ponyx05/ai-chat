@@ -2,17 +2,9 @@
 
 ## 项目简介
 
-前后端分离的Monorepo工程，使用pnpm workspace管理。
+该工程是一个 AI 聊天系统，基于 pnpm + monorepo 构建
 
 ## 目录结构
 
 - `packages/frontend/` - 前端工程
 - `packages/backend/` - 后端工程
-
-## 技术栈
-
-| 子工程   | 技术                                                                        |
-| -------- | --------------------------------------------------------------------------- |
-| frontend | Vite 6 + Vue 3 + Ant Design Vue 4 + Pinia + Vue Router + Axios + TypeScript |
-| backend  | Express + MySQL + JWT + bcryptjs + TypeScript                               |
-| monorepo | pnpm workspace                                                              |
