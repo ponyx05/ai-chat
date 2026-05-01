@@ -58,12 +58,6 @@ export async function teardownTestDatabase() {
 }
 ```
 
-- [ ] **Step 2: 提交**
-
-```bash
-cd packages/backend && git add src/e2e/setupTests.ts && git commit -m "refactor(e2e): rewrite setupTests with mysql cli + prisma migrate deploy"
-```
-
 ---
 
 ## Task 2: 创建 jest.setup.js
@@ -75,12 +69,6 @@ cd packages/backend && git add src/e2e/setupTests.ts && git commit -m "refactor(
 
 ```javascript
 process.env.TEST_DATABASE_NAME = 'ai_chat_test';
-```
-
-- [ ] **Step 2: 提交**
-
-```bash
-cd packages/backend && git add src/e2e/jest.setup.js && git commit -m "feat(e2e): add jest.setup.js to set test env vars"
 ```
 
 ---
@@ -98,12 +86,6 @@ export default {
   testMatch: ['**/src/e2e/**/*.test.ts'],
   timeout: 30000,
 };
-```
-
-- [ ] **Step 2: 提交**
-
-```bash
-cd packages/backend && git add jest.config.js && git commit -m "feat(e2e): add jest.config.js with setupFiles"
 ```
 
 ---

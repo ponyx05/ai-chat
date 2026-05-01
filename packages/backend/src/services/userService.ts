@@ -16,7 +16,7 @@ export async function changePassword(
     throw createError('用户不存在', 404);
   }
 
-  const isValid = await verifyPassword(oldPassword, user.password_hash);
+  const isValid = await verifyPassword(oldPassword, user.passwordHash);
   if (!isValid) {
     throw createError('当前密码错误', 401);
   }

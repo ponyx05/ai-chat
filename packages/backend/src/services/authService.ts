@@ -29,7 +29,7 @@ export async function login(username: string, password: string): Promise<{ token
     throw createError('用户名或密码错误', 401);
   }
 
-  const isValid = await verifyPassword(password, user.password_hash);
+  const isValid = await verifyPassword(password, user.passwordHash);
   if (!isValid) {
     throw createError('用户名或密码错误', 401);
   }
@@ -54,5 +54,5 @@ export async function getCurrentUser(userId: number): Promise<{ userId: number; 
   if (!user) {
     throw createError('用户不存在', 404);
   }
-  return { userId: user.id, username: user.username, createdAt: user.created_at };
+  return { userId: user.id, username: user.username, createdAt: user.createdAt };
 }

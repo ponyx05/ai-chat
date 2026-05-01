@@ -1,67 +1,59 @@
-import mysql, { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
-import crypto from 'crypto';
-import { dbConfig } from '../config/database.js';
+import crypto from "crypto";
+import { prisma } from "../lib/prisma.js";
 
 export interface Token {
   id: number;
-  user_id: number;
-  token_hash: string;
-  expires_at: Date;
-  created_at: Date;
+  userId: number;
+  tokenHash: string;
+  expiresAt: Date;
+  createdAt: Date;
   revoked: boolean;
 }
 
 export function hashToken(token: string): string {
-  return crypto.createHash('sha256').update(token).digest('hex');
+  //createHash创建一个 SHA-256 哈希器。
+  //update将 token 数据输入到这个哈希器中。
+  //digest计算出 token 的 SHA-256 哈希值，并将其以十六进制字符串的形式返回。
+  return crypto.createHash("sha256").update(token).digest("hex");
 }
 
-export async function createToken(userId: number, token: string, expiresAt: Date): Promise<number> {
-  const connection = await mysql.createConnection(dbConfig);
-  try {
-    const tokenHash = hashToken(token);
-    const [result] = await connection.execute<ResultSetHeader>(
-      'INSERT INTO user_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)',
-      [userId, tokenHash, expiresAt]
-    );
-    return result.insertId;
-  } finally {
-    await connection.end();
-  }
+export async function createToken(
+  userId: number,
+  token: string,
+  expiresAt: Date,
+): Promise<number> {
+  const tokenHash = hashToken(token);
+  const result = await prisma.userToken.create({
+    data: {
+      userId,
+      tokenHash,
+      expiresAt,
+    },
+  });
+  return result.id;
 }
 
-export async function findTokenByHash(tokenHash: string): Promise<Token | null> {
-  const connection = await mysql.createConnection(dbConfig);
-  try {
-    const [rows] = await connection.execute<RowDataPacket[]>(
-      'SELECT * FROM user_tokens WHERE token_hash = ?',
-      [tokenHash]
-    );
-    return rows.length > 0 ? (rows[0] as Token) : null;
-  } finally {
-    await connection.end();
-  }
+export async function findTokenByHash(
+  tokenHash: string,
+): Promise<Token | null> {
+  const token = await prisma.userToken.findUnique({
+    where: { tokenHash },
+  });
+  return token
+    ? { ...token, userId: token.userId, tokenHash: token.tokenHash }
+    : null;
 }
 
 export async function revokeToken(tokenHash: string): Promise<void> {
-  const connection = await mysql.createConnection(dbConfig);
-  try {
-    await connection.execute(
-      'UPDATE user_tokens SET revoked = TRUE WHERE token_hash = ?',
-      [tokenHash]
-    );
-  } finally {
-    await connection.end();
-  }
+  await prisma.userToken.update({
+    where: { tokenHash },
+    data: { revoked: true },
+  });
 }
 
 export async function revokeAllUserTokens(userId: number): Promise<void> {
-  const connection = await mysql.createConnection(dbConfig);
-  try {
-    await connection.execute(
-      'UPDATE user_tokens SET revoked = TRUE WHERE user_id = ?',
-      [userId]
-    );
-  } finally {
-    await connection.end();
-  }
+  await prisma.userToken.updateMany({
+    where: { userId },
+    data: { revoked: true },
+  });
 }
