@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useRouter, type Router } from 'vue-router'
-import { Typography, Space, Button } from 'ant-design-vue'
+import { Typography, Space, Button, message } from 'ant-design-vue'
 import { useAuthStore } from '../store/auth'
 
 const router: Router = useRouter()
@@ -15,6 +15,7 @@ onMounted(async () => {
 
 const handleLogout = async () => {
   await authStore.logout()
+  message.success('退出登录成功')
   router.push('/login')
 }
 

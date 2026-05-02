@@ -45,7 +45,7 @@ export async function findTokenByHash(
 }
 
 export async function revokeToken(tokenHash: string): Promise<void> {
-  await prisma.userToken.update({
+  await prisma.userToken.updateMany({
     where: { tokenHash },
     data: { revoked: true },
   });
