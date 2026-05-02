@@ -126,7 +126,6 @@ Authorization: Bearer <token>
 | username | VARCHAR(50) | UNIQUE, NOT NULL | 用户名 |
 | password_hash | VARCHAR(255) | NOT NULL | 密码（bcrypt） |
 | created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | 创建时间 |
-| updated_at | DATETIME | ON UPDATE CURRENT_TIMESTAMP | 更新时间 |
 
 ### user_tokens 表
 
