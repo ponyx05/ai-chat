@@ -3,7 +3,7 @@ import { changePassword } from "../services/userService.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { ApiResponse, ChangePasswordBody } from "../types/index.js";
 
-const router: Router = Router();
+const router: Router = Router(); //Router既是一个函数也是一个类型声明，命名可重复。函数属于express，类型声明属于.d.ts文件
 
 router.put(
   "/password",
