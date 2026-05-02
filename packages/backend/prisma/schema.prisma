@@ -12,6 +12,7 @@ model User {
   passwordHash String      @map("password_hash")
   createdAt    DateTime    @default(now()) @map("created_at")
   tokens       UserToken[]
+  sessions     Session[]
 
   @@map("users")
 }
@@ -26,4 +27,27 @@ model UserToken {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_tokens")
+}
+
+model Session {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id")
+  title     String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@map("sessions")
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  sessionId Int      @map("session_id")
+  role      String
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
 }

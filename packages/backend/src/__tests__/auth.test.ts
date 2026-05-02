@@ -1,5 +1,6 @@
 import request from "supertest";
 import app from "../app.js";
+import { prisma } from "../lib/prisma.js";
 
 describe("Auth API", () => {
   describe("POST /api/auth/register", () => {

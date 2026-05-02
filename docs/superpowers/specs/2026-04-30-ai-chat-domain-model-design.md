@@ -8,17 +8,18 @@
 
 ### 2.1 Session（会话）
 
-| 字段       | 类型   | 说明                                 |
-| ---------- | ------ | ------------------------------------ |
-| id         | number | 主键，自增                           |
-| user_id    | number | 所属用户 ID，外键                    |
-| title      | string | 自动生成，取用户首条消息前 10 个字符 |
-| created_at | Date   | 创建时间                             |
-| updated_at | Date   | 最后活跃时间（最后一条消息时间）     |
+| 字段       | 类型   | 说明                                              |
+| ---------- | ------ | ------------------------------------------------- |
+| id         | number | 主键，自增                                        |
+| user_id    | number | 所属用户 ID，外键（不在本项目设计）              |
+| title      | string | 自动生成，用户可自行修改                          |
+| created_at | Date   | 创建时间                                          |
+| updated_at | Date   | 最后活跃时间（仅新消息时更新，修改 title 不影响） |
 
 **行为：**
 
-- 删除时**级联硬删除**所有关联消息
+- 删除时级联硬删除所有关联消息
+- 排序：按 `updated_at` 降序
 
 ### 2.2 Message（消息）
 
@@ -28,14 +29,12 @@
 | session_id | number                | 所属会话 ID，外键      |
 | role       | 'user' \| 'assistant' | 发送方角色             |
 | content    | string                | 文本内容               |
-| read       | boolean               | 是否已读               |
 | created_at | Date                  | 创建时间，用于消息排序 |
 
 **约束：**
 
-- 仅支持文本，不支持多模态
-- 不支持编辑和撤回
-- 不记录 AI 模型名称
+- 仅支持文本，不支持多模态/编辑/撤回/删除
+- 排序：按 `created_at` 升序
 
 ## 3. 关系
 
@@ -54,6 +53,8 @@ User 1 ───< Session 1 ───< Message
 1. 取用户发送的第一条消息内容
 2. 截取前 10 个字符作为标题
 3. 若消息不足 10 字符，则直接使用全部内容
+
+标题生成后，用户可自行修改。修改 title 不影响会话的 `updated_at`。
 
 ## 5. 表结构（MySQL）
 
@@ -78,7 +79,6 @@ CREATE TABLE messages (
   session_id INT NOT NULL,
   role ENUM('user', 'assistant') NOT NULL,
   content TEXT NOT NULL,
-  read BOOLEAN DEFAULT FALSE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
 );
@@ -86,4 +86,7 @@ CREATE TABLE messages (
 
 ## 6. TODO
 
-- [ ] 设计 API 文档
+- [x] 设计领域模型
+- [x] 实现 Prisma Schema
+- [x] 实现 API 路由和服务层
+- [ ] 实现 AI 集成（消息发送和流式响应）

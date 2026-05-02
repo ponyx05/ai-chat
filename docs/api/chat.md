@@ -99,29 +99,41 @@ Authorization: Bearer <token>
 Authorization: Bearer <token>
 ```
 
+**查询参数**
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| cursor | string | 否 | 分页游标，值为上页最后一条消息的 `createdAt` |
+| limit | number | 否 | 每页消息数，范围 10-20，默认 20 |
+
 **响应成功 (200)**
 ```json
 {
   "code": 200,
   "message": "success",
-  "data": [
-    {
-      "id": 1,
-      "role": "user",
-      "content": "你好，请帮我写一段代码",
-      "createdAt": "2026-04-30T10:00:00.000Z"
-    },
-    {
-      "id": 2,
-      "role": "assistant",
-      "content": "好的，请问你想写什么代码？",
-      "createdAt": "2026-04-30T10:00:05.000Z"
+  "data": {
+    "data": [
+      {
+        "id": 1,
+        "role": "user",
+        "content": "你好，请帮我写一段代码",
+        "createdAt": "2026-04-30T10:00:00.000Z"
+      },
+      {
+        "id": 2,
+        "role": "assistant",
+        "content": "好的，请问你想写什么代码？",
+        "createdAt": "2026-04-30T10:00:05.000Z"
+      }
+    ],
+    "pagination": {
+      "hasMore": true,
+      "nextCursor": "2026-04-30T09:00:00.000Z"
     }
-  ]
+  }
 }
 ```
 
-> 按 `created_at` 升序排列
+> 按 `created_at` 升序排列，首次请求不传 cursor 返回最新消息
 
 ---
 
@@ -187,7 +199,7 @@ data: {"id": 2, "createdAt": "2026-04-30T10:00:05.000Z"}
 |------|------|------|------|
 | id | INT | PK, AUTO_INCREMENT | 会话ID |
 | user_id | INT | FK -> users.id, NOT NULL | 所属用户 |
-| title | VARCHAR(255) | NULL | 标题（发送首条消息后生成） |
+| title | VARCHAR(255) | NOT NULL | 标题（发送首条消息后生成） |
 | created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | 创建时间 |
 | updated_at | DATETIME | ON UPDATE CURRENT_TIMESTAMP | 最后活跃时间（仅消息发送时更新） |
 
