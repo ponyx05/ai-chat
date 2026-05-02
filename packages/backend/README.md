@@ -20,58 +20,41 @@
 packages/backend/
 ├── package.json            # 项目配置
 ├── tsconfig.json           # TypeScript 配置
+├── jest.config.ts          # Jest 测试配置
+├── prisma.config.ts        # Prisma 配置文件
 ├── prisma/
-│   └── schema.prisma       # Prisma 数据模型
+│   ├── schema.prisma       # Prisma 数据模型
+│   └── migrations/         # 数据库迁移文件
 └── src/
     ├── index.ts            # 启动入口
     ├── app.ts              # Express 应用入口
-    ├── config/             # 配置
-    │   └── database.ts     # 数据库配置
-    ├── middleware/         # 中间件
-    │   ├── auth.ts         # JWT 认证中间件
-    │   └── errorHandler.ts # 统一错误处理
-    ├── routes/             # 路由
-    │   ├── auth.ts         # 认证路由 (注册/登录/登出/当前用户)
-    │   ├── users.ts        # 用户路由 (修改密码)
-    │   └── index.ts        # 统一导出
-    ├── services/           # 业务逻辑
-    │   ├── authService.ts  # 认证业务逻辑
-    │   ├── userService.ts  # 用户业务逻辑
-    │   └── index.ts        # 统一导出
-    ├── types/              # 类型定义
-    │   └── index.ts        # TypeScript 类型定义
-    └── utils/              # 工具函数
-        ├── jwt.ts          # JWT 工具
-        ├── password.ts     # 密码加密
-        └── index.ts        # 统一导出
+    ├── lib/                 # 库文件
+    │   └── prisma.ts        # Prisma 客户端实例
+    ├── models/              # 数据模型
+    │   ├── index.ts         # 统一导出
+    │   ├── token.ts         # Token 模型
+    │   └── user.ts          # User 模型
+    ├── middleware/          # 中间件
+    │   ├── auth.ts          # JWT 认证中间件
+    │   └── errorHandler.ts  # 统一错误处理
+    ├── routes/              # 路由
+    │   ├── auth.ts          # 认证路由 (注册/登录/登出/当前用户)
+    │   ├── users.ts         # 用户路由 (修改密码)
+    │   ├── hello.ts         # 测试路由
+    │   └── index.ts         # 统一导出
+    ├── services/            # 业务逻辑
+    │   ├── authService.ts   # 认证业务逻辑
+    │   ├── userService.ts   # 用户业务逻辑
+    │   └── index.ts         # 统一导出
+    ├── types/               # 类型定义
+    │   └── index.ts         # TypeScript 类型定义
+    ├── utils/               # 工具函数
+    │   ├── jwt.ts           # JWT 工具
+    │   ├── password.ts      # 密码加密
+    │   └── index.ts         # 统一导出
+    └── e2e/                  # 端到端测试
+        └── auth.test.ts     # 认证接口测试
 ```
-
-## 开发命令
-
-```bash
-# 安装依赖
-pnpm install
-
-# 开发模式 (热重载)
-pnpm dev
-
-# 推送数据库 schema
-pnpm db:push
-
-# 构建生产版本
-pnpm build
-
-# 启动生产服务器
-pnpm start
-```
-
-## 数据库配置
-
-通过环境变量配置：
-
-| 变量         | 默认值                              | 说明           |
-| ------------ | ----------------------------------- | -------------- |
-| DATABASE_URL | mysql://root@localhost:3306/ai_chat | 数据库连接地址 |
 
 ## API 接口
 

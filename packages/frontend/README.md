@@ -4,15 +4,15 @@
 
 ## 技术栈
 
-| 技术 | 说明 |
-| ---- | ---- |
-| Vite 6 | 构建工具 |
-| Vue 3 | 渐进式前端框架 |
-| Ant Design Vue 4 | UI 组件库 |
-| Pinia | 状态管理 |
-| Vue Router | 路由管理 |
-| Axios | HTTP 客户端 |
-| TypeScript | 类型安全 |
+| 技术             | 说明           |
+| ---------------- | -------------- |
+| Vite 6           | 构建工具       |
+| Vue 3            | 渐进式前端框架 |
+| Ant Design Vue 4 | UI 组件库      |
+| Pinia            | 状态管理       |
+| Vue Router       | 路由管理       |
+| Axios            | HTTP 客户端    |
+| TypeScript       | 类型安全       |
 
 ## 目录结构
 
@@ -49,25 +49,9 @@ packages/frontend/
         └── index.ts         # 统一导出
 ```
 
-## 开发命令
-
-```bash
-# 安装依赖
-pnpm install
-
-# 开发模式 (热重载)
-pnpm dev
-
-# 构建生产版本
-pnpm build
-
-# 预览生产版本
-pnpm preview
-```
-
 ## 注意事项
 
 - 开发服务器默认运行在 http://localhost:3000
-- API 请求已配置代理到后端 /api/*
+- API 请求已配置代理到后端 /api/\*
 - 路由守卫：未登录自动跳转登录页
 - Token 存储在 localStorage
