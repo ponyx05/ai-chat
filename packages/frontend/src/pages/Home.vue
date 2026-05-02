@@ -15,7 +15,7 @@ onMounted(async () => {
 
 const handleLogout = async () => {
   await authStore.logout()
-  message.success('退出登录成功')
+  message.success('登出成功')
   router.push('/login')
 }
 
