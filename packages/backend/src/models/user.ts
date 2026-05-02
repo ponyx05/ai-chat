@@ -6,7 +6,6 @@ export interface User {
   username: string;
   passwordHash: string;
   createdAt: Date;
-  updatedAt: Date | null;
 }
 
 export interface UserCreateResult {
