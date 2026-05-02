@@ -11,7 +11,7 @@ export interface Session {
 export interface Message {
   id: number;
   sessionId: number;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   createdAt: Date;
 }
@@ -19,14 +19,14 @@ export interface Message {
 export async function findSessionsByUserId(userId: number): Promise<Session[]> {
   const sessions = await prisma.session.findMany({
     where: { userId },
-    orderBy: { updatedAt: 'desc' },
+    orderBy: { updatedAt: "desc" },
   });
-  return sessions.map(s => ({
-    id: s.id,
-    userId: s.userId,
-    title: s.title,
-    createdAt: s.createdAt,
-    updatedAt: s.updatedAt,
+  return sessions.map((session) => ({
+    id: session.id,
+    userId: session.userId,
+    title: session.title,
+    createdAt: session.createdAt,
+    updatedAt: session.updatedAt,
   }));
 }
 
@@ -44,7 +44,10 @@ export async function findSessionById(id: number): Promise<Session | null> {
   };
 }
 
-export async function createSession(userId: number, title: string): Promise<Session> {
+export async function createSession(
+  userId: number,
+  title: string,
+): Promise<Session> {
   const session = await prisma.session.create({
     data: { userId, title },
   });
@@ -57,7 +60,10 @@ export async function createSession(userId: number, title: string): Promise<Sess
   };
 }
 
-export async function updateSessionTitle(id: number, title: string): Promise<Session> {
+export async function updateSessionTitle(
+  id: number,
+  title: string,
+): Promise<Session> {
   const session = await prisma.session.update({
     where: { id },
     data: { title },
@@ -101,7 +107,7 @@ export async function findMessagesBySessionId(
       sessionId,
       ...(cursor ? { createdAt: { lt: cursor } } : {}),
     },
-    orderBy: { createdAt: 'asc' },
+    orderBy: { createdAt: "asc" },
     take: (limit || 20) + 1,
   });
 
@@ -109,10 +115,10 @@ export async function findMessagesBySessionId(
   const resultMessages = hasMore ? messages.slice(0, -1) : messages;
 
   return {
-    messages: resultMessages.map(m => ({
+    messages: resultMessages.map((m) => ({
       id: m.id,
       sessionId: m.sessionId,
-      role: m.role as 'user' | 'assistant',
+      role: m.role as "user" | "assistant",
       content: m.content,
       createdAt: m.createdAt,
     })),
@@ -122,7 +128,7 @@ export async function findMessagesBySessionId(
 
 export async function createMessage(
   sessionId: number,
-  role: 'user' | 'assistant',
+  role: "user" | "assistant",
   content: string,
 ): Promise<Message> {
   const message = await prisma.message.create({
@@ -131,13 +137,32 @@ export async function createMessage(
   return {
     id: message.id,
     sessionId: message.sessionId,
-    role: message.role as 'user' | 'assistant',
+    role: message.role as "user" | "assistant",
     content: message.content,
     createdAt: message.createdAt,
   };
 }
 
-export async function findMessagesCountBySessionId(sessionId: number): Promise<number> {
+export async function updateMessageContent(
+  id: number,
+  content: string,
+): Promise<Message> {
+  const message = await prisma.message.update({
+    where: { id },
+    data: { content },
+  });
+  return {
+    id: message.id,
+    sessionId: message.sessionId,
+    role: message.role as "user" | "assistant",
+    content: message.content,
+    createdAt: message.createdAt,
+  };
+}
+
+export async function findMessagesCountBySessionId(
+  sessionId: number,
+): Promise<number> {
   return prisma.message.count({
     where: { sessionId },
   });

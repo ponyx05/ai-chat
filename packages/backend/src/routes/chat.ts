@@ -154,19 +154,30 @@ router.get(
 router.post(
   "/messages",
   authMiddleware,
-  async (
-    req: Request,
-    res: Response<ApiResponse<{ sessionId: number }>>,
-    next: NextFunction,
-  ) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { sessionId, content } = req.body as SendMessageBody;
-      const result = await sendMessage(req.user!.userId, content, sessionId);
-      res.json({
-        code: 200,
-        message: "消息发送成功",
-        data: { sessionId: result.sessionId },
-      });
+
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.flushHeaders();
+
+      const result = await sendMessage(
+        req.user!.userId,
+        content,
+        sessionId,
+        async (chunk) => {
+          res.write(`event: message\ndata: ${JSON.stringify({ content: chunk })}\n\n`);
+        },
+      );
+
+      if (result.isNewSession) {
+        res.write(`event: session\ndata: ${JSON.stringify({ sessionId: result.sessionId })}\n\n`);
+      }
+
+      res.write(`event: done\ndata: ${JSON.stringify({ id: result.assistantMessageId })}\n\n`);
+      res.end();
     } catch (error) {
       next(error);
     }

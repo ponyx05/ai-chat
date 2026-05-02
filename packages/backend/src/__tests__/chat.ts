@@ -38,10 +38,15 @@ describe("Chat API", () => {
         .send({ content: "Hello AI assistant" });
 
       expect(res.status).toBe(200);
-      expect(res.body.code).toBe(200);
-      expect(res.body.message).toBe("消息发送成功");
-      expect(res.body.data.sessionId).toBeDefined();
-      testSessionId = res.body.data.sessionId;
+      expect(res.headers['content-type']).toContain('text/event-stream');
+
+      const body = res.text;
+      const sessionMatch = body.match(/event: session\ndata: ({[^}]+})/);
+      const doneMatch = body.match(/event: done\ndata: ({[^}]+})/);
+      expect(sessionMatch).not.toBeNull();
+      const sessionData = JSON.parse(sessionMatch![1]);
+      expect(sessionData.sessionId).toBeDefined();
+      testSessionId = sessionData.sessionId;
     });
 
     it("should auto-generate title from content (first 10 chars)", async () => {
@@ -52,11 +57,19 @@ describe("Chat API", () => {
         .send({ content: uniqueContent });
 
       expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toContain('text/event-stream');
+
+      const body = res.text;
+      const sessionMatch = body.match(/event: session\ndata: ({[^}]+})/);
+      expect(sessionMatch).not.toBeNull();
+      const sessionData = JSON.parse(sessionMatch![1]);
+      const newSessionId = sessionData.sessionId;
+
       const sessionRes = await request(app)
         .get("/api/sessions")
         .set("Authorization", `Bearer ${userToken}`);
       const session = sessionRes.body.data.find(
-        (s: { id: number }) => s.id === res.body.data.sessionId,
+        (s: { id: number }) => s.id === newSessionId,
       );
       expect(session.title).toBe(uniqueContent.slice(0, 10));
     });
@@ -68,7 +81,8 @@ describe("Chat API", () => {
         .send({ content: "Second message", sessionId: testSessionId });
 
       expect(res.status).toBe(200);
-      expect(res.body.data.sessionId).toBe(testSessionId);
+      expect(res.headers['content-type']).toContain('text/event-stream');
+      expect(res.text).toMatch(/event: done/);
     });
 
     it("should reject request without token", async () => {
@@ -95,7 +109,12 @@ describe("Chat API", () => {
         .send({ content: "Message to new session", sessionId: 99999 });
 
       expect(res.status).toBe(200);
-      expect(res.body.data.sessionId).not.toBe(99999);
+      expect(res.headers['content-type']).toContain('text/event-stream');
+      const body = res.text;
+      const sessionMatch = body.match(/event: session\ndata: ({[^}]+})/);
+      expect(sessionMatch).not.toBeNull();
+      const sessionData = JSON.parse(sessionMatch![1]);
+      expect(sessionData.sessionId).not.toBe(99999);
     });
   });
 
@@ -208,12 +227,21 @@ describe("Chat API", () => {
       expect(res.body.message).toBe("limit 必须介于 10-20 之间");
     });
 
-    it("should accept valid limit", async () => {
+  it("should accept valid limit", async () => {
       const createRes = await request(app)
         .post("/api/messages")
         .set("Authorization", `Bearer ${userToken}`)
         .send({ content: "Test limit content" });
-      const sid = createRes.body.data.sessionId;
+      let sid: number;
+      const sessionMatch = createRes.text.match(/event: session\ndata: ({[^}]+})/);
+      if (sessionMatch) {
+        const sessionData = JSON.parse(sessionMatch[1]);
+        sid = sessionData.sessionId;
+      } else {
+        const doneMatch = createRes.text.match(/event: done\ndata: ({[^}]+})/);
+        const doneData = JSON.parse(doneMatch![1]);
+        sid = doneData.id;
+      }
 
       const res = await request(app)
         .get(`/api/sessions/${sid}/messages?limit=10`)
@@ -277,7 +305,16 @@ describe("Chat API", () => {
         .post("/api/messages")
         .set("Authorization", `Bearer ${userToken}`)
         .send({ content: "Session to delete" });
-      sessionToDelete = res.body.data.sessionId;
+      const sessionMatch = res.text.match(/event: session\ndata: ({[^}]+})/);
+      if (sessionMatch) {
+        const sessionData = JSON.parse(sessionMatch[1]);
+        sessionToDelete = sessionData.sessionId;
+      } else {
+        const doneMatch = res.text.match(/event: done\ndata: ({[^}]+})/);
+        expect(doneMatch).not.toBeNull();
+        const doneData = JSON.parse(doneMatch![1]);
+        sessionToDelete = doneData.id;
+      }
     });
 
     it("should delete session successfully", async () => {
@@ -303,7 +340,16 @@ describe("Chat API", () => {
         .post("/api/messages")
         .set("Authorization", `Bearer ${userToken}`)
         .send({ content: "Other user session" });
-      const otherSessionId = createRes.body.data.sessionId;
+      let otherSessionId: number;
+      const sessionMatch = createRes.text.match(/event: session\ndata: ({[^}]+})/);
+      if (sessionMatch) {
+        const sessionData = JSON.parse(sessionMatch[1]);
+        otherSessionId = sessionData.sessionId;
+      } else {
+        const doneMatch = createRes.text.match(/event: done\ndata: ({[^}]+})/);
+        const doneData = JSON.parse(doneMatch![1]);
+        otherSessionId = doneData.id;
+      }
 
       const res = await request(app)
         .delete(`/api/sessions/${otherSessionId}`)
@@ -317,7 +363,16 @@ describe("Chat API", () => {
         .post("/api/messages")
         .set("Authorization", `Bearer ${userToken}`)
         .send({ content: "Test session" });
-      const sessionId = createRes.body.data.sessionId;
+      let sessionId: number;
+      const sessionMatch = createRes.text.match(/event: session\ndata: ({[^}]+})/);
+      if (sessionMatch) {
+        const sessionData = JSON.parse(sessionMatch[1]);
+        sessionId = sessionData.sessionId;
+      } else {
+        const doneMatch = createRes.text.match(/event: done\ndata: ({[^}]+})/);
+        const doneData = JSON.parse(doneMatch![1]);
+        sessionId = doneData.id;
+      }
 
       const res = await request(app).delete(`/api/sessions/${sessionId}`);
 

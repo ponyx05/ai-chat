@@ -7,6 +7,9 @@ export function errorHandler(
   res: Response<ApiResponse>,
   _next: NextFunction
 ): void {
+  if (res.headersSent) {
+    return;
+  }
   const statusCode = err.statusCode || 500;
   const message = err.message || '服务器内部错误';
 

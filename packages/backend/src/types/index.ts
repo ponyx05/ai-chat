@@ -37,6 +37,11 @@ export interface SendMessageBody {
   content: string;
 }
 
+export interface SendMessageResponse {
+  sessionId: number;
+  assistantMessageId?: number;
+}
+
 export interface UpdateSessionTitleBody {
   title: string;
 }
