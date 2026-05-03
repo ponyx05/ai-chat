@@ -93,17 +93,16 @@ export const useChatStore = defineStore("chat", () => {
         { sessionId: sessionId || undefined, content },
         {
           onChunk: (chunk) => {
-            // 删除AI占位数据
-            messages.value.splice(
-              messages.value.findIndex((item) => item.id === 0),
-              1,
-            );
-            // console.log({ chunk });
+            console.log({ chunk });
 
             fullContent += chunk;
             if (chunk.includes("</think>")) {
               // 清除临时占位
               isAIThinking.value = false;
+              messages.value.splice(
+                messages.value.findIndex((item) => item.id === -1),
+                1,
+              );
             }
             const lastMsg = messages.value[messages.value.length - 1];
             if (lastMsg?.role === "assistant") {
