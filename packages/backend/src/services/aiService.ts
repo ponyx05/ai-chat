@@ -11,21 +11,18 @@ export interface ChatMessage {
   name?: string;
 }
 
-function createMockStream(): ReadableStream {
+function createMockStream(): AsyncIterable<any> {
   const mockResponse = "这是一条模拟 AI 响应，用于测试环境。";
-  return new ReadableStream({
-    async start(controller) {
-      const data = `data: ${JSON.stringify({ content: mockResponse })}\n\n`;
-      controller.enqueue(new TextEncoder().encode(data));
-      controller.close();
-    },
-  });
+  async function* mockGenerator() {
+    yield { choices: [{ delta: { content: mockResponse } }] };
+  }
+  return mockGenerator();
 }
 
 export async function createStreamingChat(
   messages: ChatMessage[],
   model?: string,
-): Promise<ReadableStream> {
+) {
   if (process.env.NODE_ENV === "test" || process.env.USE_MOCK_AI === "true") {
     return createMockStream();
   }
@@ -43,20 +40,8 @@ export async function createStreamingChat(
       ...(m.name ? { name: m.name } : {}),
     })),
     stream: true,
+    temperature: 0.3,
   });
 
-  return new ReadableStream({
-    async start(controller) {
-      try {
-        for await (const chunk of response) {
-          const content = chunk.choices[0]?.delta?.content || "";
-          if (content) {
-            controller.enqueue(`data: ${JSON.stringify({ content })}\n\n`);
-          }
-        }
-      } finally {
-        controller.close();
-      }
-    },
-  });
+  return response;
 }

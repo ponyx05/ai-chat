@@ -42,7 +42,6 @@ packages/backend/
     │   ├── auth.ts         # 认证路由
     │   ├── chat.ts         # 聊天路由
     │   ├── users.ts        # 用户路由
-    │   ├── hello.ts        # 测试路由
     │   └── index.ts        # 统一导出
     ├── services/           # 业务逻辑
     │   ├── aiService.ts    # AI 模型调用

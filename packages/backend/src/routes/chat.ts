@@ -22,7 +22,7 @@ import { createError } from "../middleware/errorHandler.js";
 const router: Router = Router();
 
 router.get(
-  "/sessions",
+  "/chat/sessions",
   authMiddleware,
   async (
     req: Request,
@@ -47,7 +47,7 @@ router.get(
 );
 
 router.put(
-  "/sessions/:id",
+  "/chat/sessions/:id",
   authMiddleware,
   async (
     req: Request,
@@ -74,7 +74,7 @@ router.put(
 );
 
 router.delete(
-  "/sessions/:id",
+  "/chat/sessions/:id",
   authMiddleware,
   async (req: Request, res: Response<ApiResponse>, next: NextFunction) => {
     try {
@@ -92,7 +92,7 @@ router.delete(
 );
 
 router.get(
-  "/sessions/:sessionId/messages",
+  "/chat/sessions/:sessionId/messages",
   authMiddleware,
   async (
     req: Request,
@@ -152,15 +152,15 @@ router.get(
 );
 
 router.post(
-  "/messages",
+  "/chat/messages",
   authMiddleware,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { sessionId, content } = req.body as SendMessageBody;
 
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
       res.flushHeaders();
 
       const result = await sendMessage(
@@ -168,15 +168,21 @@ router.post(
         content,
         sessionId,
         async (chunk) => {
-          res.write(`event: message\ndata: ${JSON.stringify({ content: chunk })}\n\n`);
+          res.write(
+            `event: message\ndata: ${JSON.stringify({ content: chunk })}\n\n`,
+          );
         },
       );
 
       if (result.isNewSession) {
-        res.write(`event: session\ndata: ${JSON.stringify({ sessionId: result.sessionId })}\n\n`);
+        res.write(
+          `event: session\ndata: ${JSON.stringify({ sessionId: result.sessionId })}\n\n`,
+        );
       }
 
-      res.write(`event: done\ndata: ${JSON.stringify({ id: result.assistantMessageId })}\n\n`);
+      res.write(
+        `event: done\ndata: ${JSON.stringify({ id: result.assistantMessageId })}\n\n`,
+      );
       res.end();
     } catch (error) {
       next(error);

@@ -1,5 +1,15 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import ErrorProvider from './components/ErrorProvider.vue'
+import { useAuthStore } from './store/auth'
+
+const authStore = useAuthStore()
+
+onMounted(() => {
+  if (authStore.token && !authStore.userInfo) {
+    authStore.fetchCurrentUser()
+  }
+})
 </script>
 
 <template>

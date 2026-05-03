@@ -1,0 +1,152 @@
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import {
+  getSessions,
+  deleteSession as deleteSessionApi,
+  updateSessionTitle as updateSessionTitleApi,
+  getMessages as getMessagesApi,
+  sendMessageSSE,
+} from "../apis/chat";
+import type { Message, Session } from "../types/chat";
+
+export const useChatStore = defineStore("chat", () => {
+  const sessions = ref<Session[]>([]);
+  const currentSessionId = ref<number | null>(null);
+  const messages = ref<Message[]>([]);
+  const isLoading = ref(false);
+  const isAIThinking = ref(false);
+
+  const fetchSessions = async () => {
+    isLoading.value = true;
+    try {
+      const res = await getSessions();
+      sessions.value = res.data.data;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const selectSession = async (sessionId: number) => {
+    currentSessionId.value = sessionId;
+    await fetchMessages(sessionId);
+  };
+
+  const createNewSession = async () => {
+    currentSessionId.value = null;
+    messages.value = [];
+  };
+
+  const deleteSession = async (sessionId: number) => {
+    await deleteSessionApi(sessionId);
+    sessions.value = sessions.value.filter((s) => s.id !== sessionId);
+    if (currentSessionId.value === sessionId) {
+      currentSessionId.value = null;
+      messages.value = [];
+    }
+  };
+
+  const updateSessionTitle = async (sessionId: number, title: string) => {
+    const res = await updateSessionTitleApi(sessionId, title);
+    const updatedSession = res.data.data;
+    const index = sessions.value.findIndex((s) => s.id === sessionId);
+    if (index !== -1) {
+      sessions.value[index] = updatedSession;
+    }
+  };
+
+  const fetchMessages = async (sessionId: number) => {
+    isLoading.value = true;
+    try {
+      const res = await getMessagesApi(sessionId);
+      messages.value = res.data.data.data;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const sendMessage = async (content: string) => {
+    isAIThinking.value = true
+
+    const userMessage: Message = {
+      id: Date.now(),
+      role: "user",
+      content,
+      createdAt: new Date().toISOString(),
+    };
+    messages.value.push(userMessage);
+
+    let sessionId = currentSessionId.value
+    let messageId: number | null = null
+    let fullContent = ''
+    let isNewSession = false
+
+    await new Promise<void>((resolve, reject) => {
+      sendMessageSSE(
+        { sessionId: sessionId || undefined, content },
+        {
+          onChunk: (chunk) => {
+            fullContent += chunk
+            if (fullContent.includes('<think>') || chunk.includes('<think>')) {
+              isAIThinking.value = false
+            }
+            const lastMsg = messages.value[messages.value.length - 1]
+            if (lastMsg?.role === 'assistant') {
+              lastMsg.content = fullContent
+            } else {
+              messages.value.push({
+                id: Date.now(),
+                role: 'assistant',
+                content: fullContent,
+                createdAt: new Date().toISOString(),
+              })
+            }
+          },
+          onSession: (newSessionId) => {
+            sessionId = newSessionId
+            isNewSession = true
+          },
+          onDone: (newMessageId) => {
+            isAIThinking.value = false
+            messageId = newMessageId
+            resolve()
+          },
+          onError: (error) => {
+            reject(error)
+          },
+        }
+      )
+    })
+
+    if (!sessionId) {
+      throw new Error('Session not created')
+    }
+
+    currentSessionId.value = sessionId
+
+    if (isNewSession) {
+      await fetchSessions()
+    }
+
+    const lastMsg = messages.value[messages.value.length - 1]
+    if (lastMsg?.role === 'assistant') {
+      lastMsg.id = messageId!
+    }
+
+    return lastMsg
+  };
+
+  return {
+    sessions,
+    currentSessionId,
+    messages,
+    isLoading,
+    isAIThinking,
+    fetchSessions,
+    selectSession,
+    createNewSession,
+    deleteSession,
+    updateSessionTitle,
+    fetchMessages,
+    sendMessage,
+  };
+});

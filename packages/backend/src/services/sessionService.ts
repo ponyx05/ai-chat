@@ -9,21 +9,25 @@ import {
   createMessage,
   updateMessageContent,
   findMessagesCountBySessionId,
-} from '../models/session.js';
-import { createStreamingChat, ChatMessage } from './aiService.js';
-import { createError } from '../middleware/errorHandler.js';
+} from "../models/session.js";
+import { createStreamingChat, ChatMessage } from "./aiService.js";
+import { createError } from "../middleware/errorHandler.js";
 
 export async function getSessionList(userId: number) {
   return findSessionsByUserId(userId);
 }
 
-export async function updateTitle(sessionId: number, userId: number, title: string) {
+export async function updateTitle(
+  sessionId: number,
+  userId: number,
+  title: string,
+) {
   const session = await findSessionById(sessionId);
   if (!session) {
-    throw createError('会话不存在', 404);
+    throw createError("会话不存在", 404);
   }
   if (session.userId !== userId) {
-    throw createError('无权操作此会话', 403);
+    throw createError("无权操作此会话", 403);
   }
   return updateSessionTitle(sessionId, title);
 }
@@ -31,10 +35,10 @@ export async function updateTitle(sessionId: number, userId: number, title: stri
 export async function removeSession(sessionId: number, userId: number) {
   const session = await findSessionById(sessionId);
   if (!session) {
-    throw createError('会话不存在', 404);
+    throw createError("会话不存在", 404);
   }
   if (session.userId !== userId) {
-    throw createError('无权操作此会话', 403);
+    throw createError("无权操作此会话", 403);
   }
   await deleteSession(sessionId);
 }
@@ -47,15 +51,20 @@ export async function getSessionMessages(
 ) {
   const session = await findSessionById(sessionId);
   if (!session) {
-    throw createError('会话不存在', 404);
+    throw createError("会话不存在", 404);
   }
   if (session.userId !== userId) {
-    throw createError('无权操作此会话', 403);
+    throw createError("无权操作此会话", 403);
   }
-  const { messages, hasMore } = await findMessagesBySessionId(sessionId, cursor, limit);
-  const nextCursor = hasMore && messages.length > 0
-    ? messages[messages.length - 1].createdAt.toISOString()
-    : null;
+  const { messages, hasMore } = await findMessagesBySessionId(
+    sessionId,
+    cursor,
+    limit,
+  );
+  const nextCursor =
+    hasMore && messages.length > 0
+      ? messages[messages.length - 1].createdAt.toISOString()
+      : null;
   return { messages, pagination: { hasMore, nextCursor } };
 }
 
@@ -64,7 +73,11 @@ export async function sendMessage(
   content: string,
   sessionId: number | undefined,
   onChunk: (content: string) => Promise<void>,
-): Promise<{ sessionId: number; isNewSession: boolean; assistantMessageId?: number }> {
+): Promise<{
+  sessionId: number;
+  isNewSession: boolean;
+  assistantMessageId?: number;
+}> {
   let currentSessionId = sessionId;
   let isNewSession = false;
 
@@ -82,7 +95,7 @@ export async function sendMessage(
     isNewSession = true;
   }
 
-  await createMessage(currentSessionId, 'user', content);
+  await createMessage(currentSessionId, "user", content);
 
   const count = await findMessagesCountBySessionId(currentSessionId);
   if (count === 1) {
@@ -90,38 +103,36 @@ export async function sendMessage(
     await updateSessionTitle(currentSessionId, title);
   }
 
-  const { messages: historyMessages } = await findMessagesBySessionId(currentSessionId);
-  const aiMessages: ChatMessage[] = historyMessages.map(m => ({
-    role: m.role,
-    content: m.content,
-    name: m.role === 'user' ? '用户' : undefined,
+  const { messages: historyMessages } =
+    await findMessagesBySessionId(currentSessionId);
+  const aiMessages: ChatMessage[] = historyMessages.map((message) => ({
+    role: message.role,
+    content: message.content,
+    name: message.role === "user" ? "用户" : undefined,
   }));
 
   const stream = await createStreamingChat(aiMessages);
-  const assistantMessage = await createMessage(currentSessionId, 'assistant', '');
+  const assistantMessage = await createMessage(
+    currentSessionId,
+    "assistant",
+    "",
+  );
   const chunks: string[] = [];
 
-  const reader = stream.getReader();
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    const text = new TextDecoder().decode(value);
-    const lines = text.split('\n');
-    for (const line of lines) {
-      if (line.startsWith('data: ')) {
-        try {
-          const data = JSON.parse(line.slice(6));
-          if (data.content) {
-            chunks.push(data.content);
-            await onChunk(data.content);
-          }
-        } catch {}
-      }
+  for await (const chunk of stream) {
+    const content = chunk.choices[0]?.delta?.content || "";
+    if (content) {
+      chunks.push(content);
+      await onChunk(content);
     }
   }
 
-  await updateMessageContent(assistantMessage.id, chunks.join(''));
+  await updateMessageContent(assistantMessage.id, chunks.join(""));
   await updateSessionUpdatedAt(currentSessionId);
 
-  return { sessionId: currentSessionId, isNewSession, assistantMessageId: assistantMessage.id };
+  return {
+    sessionId: currentSessionId,
+    isNewSession,
+    assistantMessageId: assistantMessage.id,
+  };
 }
