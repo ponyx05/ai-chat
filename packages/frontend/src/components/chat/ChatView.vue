@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted, onUpdated } from 'vue'
 import Sidebar from './Sidebar.vue'
 import WelcomeView from './WelcomeView.vue'
 import MessageBubble from './MessageBubble.vue'
@@ -29,7 +29,6 @@ const scrollToBottom = async () => {
   if (messageListRef.value) {
     messageListRef.value.scrollTo({
       top: messageListRef.value.scrollHeight,
-      behavior: 'smooth'
     })
   }
 }
@@ -62,17 +61,19 @@ watch(() => chatStore.messages.length, () => {
   })
 })
 
+onUpdated(() => {
+  messageListRef.value?.scrollTo({
+    top: messageListRef.value.scrollHeight,
+  })
+})
+
 onMounted(async () => {
   await chatStore.fetchSessions()
-  if (messageListRef.value) {
-    messageListRef.value.addEventListener('scroll', handleScroll)
-  }
+  messageListRef.value && messageListRef.value.addEventListener('scroll', handleScroll)
 })
 
 onUnmounted(() => {
-  if (messageListRef.value) {
-    messageListRef.value.removeEventListener('scroll', handleScroll)
-  }
+  messageListRef.value && messageListRef.value.removeEventListener('scroll', handleScroll)
 })
 </script>
 
@@ -83,20 +84,18 @@ onUnmounted(() => {
       <WelcomeView v-if="!hasStartedChat" @send="handleSendMessage" />
       <template v-else>
         <div ref="messageListRef" class="message-list">
-          <a-spin v-if="chatStore.isAIThinking" class="loading-spinner" />
-          <template v-else>
-            <template v-for="msg in chatStore.messages" :key="msg.id">
-              <MessageBubble v-if="msg.role === 'user'" :content="msg.content" />
-              <AssistantMessage v-else :content="msg.content" />
-            </template>
+          <template v-for="(msg, index) in chatStore.messages" :key="msg.id">
+            <MessageBubble v-if="msg.role === 'user'" :content="msg.content" />
+            <AssistantMessage v-else :content="msg.content"
+              :is-loading="index === chatStore.messages.length - 1 && msg.role === 'assistant' && chatStore.isAIThinking" />
           </template>
         </div>
+        <ScrollToBottom :visible="showScrollButton" @scroll-to-bottom="scrollToBottom" />
         <div class="message-container">
           <MessageInput placeholder="有问题，尽管问" @send="handleSendMessage" />
         </div>
       </template>
     </div>
-    <ScrollToBottom :visible="showScrollButton" @scroll-to-bottom="scrollToBottom" />
   </div>
 </template>
 
@@ -113,19 +112,13 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 
 .message-list {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
-}
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+  padding: 24px 24px 100px 24px;
 }
 
 .message-container {

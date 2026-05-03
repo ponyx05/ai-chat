@@ -5,9 +5,12 @@ import hljs from 'highlight.js'
 interface Props {
   content: string
   timestamp?: string
+  isLoading?: boolean
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  isLoading: false
+})
 
 const md: MarkdownIt = new MarkdownIt({
   html: false,
@@ -64,6 +67,11 @@ const renderMarkdown = (content: string): string => {
 <template>
   <div class="assistant-message">
     <div class="message-content" v-html="renderMarkdown(content)"></div>
+    <div v-if="isLoading" class="loading-indicator">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
     <div v-if="timestamp" class="message-time">{{ timestamp }}</div>
   </div>
 </template>
@@ -118,5 +126,40 @@ const renderMarkdown = (content: string): string => {
   font-size: 12px;
   color: #999;
   margin-top: 4px;
+}
+
+.loading-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 8px 0;
+}
+
+.loading-indicator .dot {
+  width: 8px;
+  height: 8px;
+  background: #999;
+  border-radius: 50%;
+  animation: pulse 1.4s infinite ease-in-out both;
+}
+
+.loading-indicator .dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-indicator .dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes pulse {
+
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+
+  40% {
+    transform: scale(1);
+  }
 }
 </style>

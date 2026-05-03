@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { nextTick, ref } from 'vue'
 import { DeleteOutlined, MoreOutlined, EditOutlined } from '@ant-design/icons-vue'
+import { InputRef } from 'ant-design-vue/es/vc-input/inputProps';
 
 interface Session {
   id: number
@@ -21,6 +22,7 @@ const emit = defineEmits<{
 
 const isEditing = ref(false)
 const editTitle = ref('')
+const editInputRef = ref<InputRef>()
 
 const confirmEdit = () => {
   if (editTitle.value.trim() && editTitle.value !== props.session.title) {
@@ -37,6 +39,9 @@ const handleMenuClick = (key: string) => {
   if (key === 'edit') {
     editTitle.value = props.session.title
     isEditing.value = true
+    nextTick(() => {
+      editInputRef.value?.select()
+    })
   } else if (key === 'delete') {
     emit('delete', props.session.id)
   }
@@ -49,8 +54,8 @@ const handleClick = () => {
 
 <template>
   <div class="session-item" :class="{ active: isActive }" @click="isEditing ? null : handleClick()">
-    <a-input v-if="isEditing" v-model:value="editTitle" class="edit-input" @press-enter="confirmEdit" @blur="cancelEdit"
-      @click.stop />
+    <a-input v-if="isEditing" v-model:value="editTitle" ref="editInputRef" class="edit-input" @press-enter="confirmEdit"
+      @blur="cancelEdit" @click.stop />
     <span v-else class="title">{{ props.session.title }}</span>
     <a-dropdown trigger="click" @click.stop>
       <MoreOutlined class="more-icon" />

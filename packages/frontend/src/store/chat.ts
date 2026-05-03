@@ -65,8 +65,6 @@ export const useChatStore = defineStore("chat", () => {
   };
 
   const sendMessage = async (content: string) => {
-    isAIThinking.value = true
-
     const userMessage: Message = {
       id: Date.now(),
       role: "user",
@@ -75,64 +73,82 @@ export const useChatStore = defineStore("chat", () => {
     };
     messages.value.push(userMessage);
 
-    let sessionId = currentSessionId.value
-    let messageId: number | null = null
-    let fullContent = ''
-    let isNewSession = false
+    isAIThinking.value = true;
+    // 回复加载状态依赖messages中最后一项且为ai回复的数据因此添加占位数据，维持加载状态
+    const dummyAIMessage: Message = {
+      id: -1,
+      role: "assistant",
+      content: "",
+      createdAt: new Date().toISOString(),
+    };
+    messages.value.push(dummyAIMessage);
+
+    let sessionId = currentSessionId.value;
+    let messageId: number | null = null;
+    let fullContent = "";
+    let isNewSession = false;
 
     await new Promise<void>((resolve, reject) => {
       sendMessageSSE(
         { sessionId: sessionId || undefined, content },
         {
           onChunk: (chunk) => {
-            fullContent += chunk
-            if (fullContent.includes('<think>') || chunk.includes('<think>')) {
-              isAIThinking.value = false
+            // 删除AI占位数据
+            messages.value.splice(
+              messages.value.findIndex((item) => item.id === 0),
+              1,
+            );
+            // console.log({ chunk });
+
+            fullContent += chunk;
+            if (chunk.includes("</think>")) {
+              // 清除临时占位
+              isAIThinking.value = false;
             }
-            const lastMsg = messages.value[messages.value.length - 1]
-            if (lastMsg?.role === 'assistant') {
-              lastMsg.content = fullContent
+            const lastMsg = messages.value[messages.value.length - 1];
+            if (lastMsg?.role === "assistant") {
+              lastMsg.content = fullContent;
             } else {
               messages.value.push({
                 id: Date.now(),
-                role: 'assistant',
+                role: "assistant",
                 content: fullContent,
                 createdAt: new Date().toISOString(),
-              })
+              });
             }
           },
           onSession: (newSessionId) => {
-            sessionId = newSessionId
-            isNewSession = true
+            sessionId = newSessionId;
+            isNewSession = true;
           },
           onDone: (newMessageId) => {
-            isAIThinking.value = false
-            messageId = newMessageId
-            resolve()
+            isAIThinking.value = false;
+            messageId = newMessageId;
+            resolve();
           },
           onError: (error) => {
-            reject(error)
+            reject(error);
           },
-        }
-      )
-    })
+        },
+      );
+    });
 
     if (!sessionId) {
-      throw new Error('Session not created')
+      throw new Error("Session not created");
     }
 
-    currentSessionId.value = sessionId
+    currentSessionId.value = sessionId;
 
     if (isNewSession) {
-      await fetchSessions()
+      await fetchSessions();
     }
 
-    const lastMsg = messages.value[messages.value.length - 1]
-    if (lastMsg?.role === 'assistant') {
-      lastMsg.id = messageId!
+    const lastMsg = messages.value[messages.value.length - 1];
+    if (lastMsg?.role === "assistant") {
+      lastMsg.id = messageId!;
     }
 
-    return lastMsg
+    return lastMsg;
   };
 
   return {

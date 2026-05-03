@@ -23,20 +23,13 @@ const handleSend = () => {
   emit('send', content)
   inputValue.value = ''
 }
-
-const handleKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault()
-    handleSend()
-  }
-}
 </script>
 
 <template>
   <div class="message-input-wrapper">
     <div class="message-input-container">
       <textarea v-model="inputValue" class="message-input" :placeholder="placeholder" :disabled="disabled"
-        @keydown="handleKeydown" />
+        @keyup.enter.prevent="handleSend" />
       <button class="send-btn" type="button" :disabled="disabled || !inputValue.trim()" @click="handleSend">
         →
       </button>
