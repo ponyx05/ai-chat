@@ -22,11 +22,6 @@ const emit = defineEmits<{
 const isEditing = ref(false)
 const editTitle = ref('')
 
-const startEdit = () => {
-  editTitle.value = props.session.title
-  isEditing.value = true
-}
-
 const confirmEdit = () => {
   if (editTitle.value.trim() && editTitle.value !== props.session.title) {
     emit('rename', props.session.id, editTitle.value.trim())
@@ -40,7 +35,8 @@ const cancelEdit = () => {
 
 const handleMenuClick = (key: string) => {
   if (key === 'edit') {
-    startEdit()
+    editTitle.value = props.session.title
+    isEditing.value = true
   } else if (key === 'delete') {
     emit('delete', props.session.id)
   }
@@ -59,9 +55,9 @@ const handleClick = () => {
     <a-dropdown trigger="click" @click.stop>
       <MoreOutlined class="more-icon" />
       <template #overlay>
-        <a-menu @click="({ key }: { key: string }) => handleMenuClick(key)">
+        <a-menu style="min-width: 150px;" @click="({ key }: { key: string }) => handleMenuClick(key)">
           <a-menu-item key="edit">
-            <EditOutlined /> 编辑
+            <EditOutlined /> 重命名
           </a-menu-item>
           <a-menu-item key="delete" danger>
             <DeleteOutlined /> 删除

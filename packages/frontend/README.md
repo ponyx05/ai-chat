@@ -33,23 +33,25 @@ packages/frontend/
     │   ├── user.ts          # 用户 API
     │   └── index.ts         # 统一导出
     ├── components/          # 公共组件
+    │   ├── ErrorProvider.vue # 全局错误处理
     │   └── chat/             # 聊天组件
-    │       ├── ChatView.vue      # 主聊天视图
-    │       ├── Sidebar.vue       # 侧边栏
-    │       ├── SessionList.vue   # 会话列表
-    │       ├── SessionItem.vue   # 会话项
-    │       ├── MessageBubble.vue # 用户消息气泡
+    │       ├── index.ts           # 统一导出
+    │       ├── ChatView.vue       # 主聊天视图
+    │       ├── Sidebar.vue        # 侧边栏
+    │       ├── SessionList.vue    # 会话列表
+    │       ├── SessionItem.vue    # 会话项
+    │       ├── MessageBubble.vue  # 用户消息气泡
     │       ├── AssistantMessage.vue  # AI 消息气泡
-    │       ├── MessageInput.vue  # 消息输入框
-    │       ├── WelcomeView.vue   # 欢迎页
+    │       ├── MessageInput.vue   # 消息输入框
+    │       ├── WelcomeView.vue    # 欢迎页
     │       ├── ScrollToBottom.vue # 滚动到底部
     │       ├── NewChatButton.vue  # 新建聊天按钮
-    │       └── UserFooter.vue    # 用户底部组件（含修改密码弹框）
+    │       └── UserFooter.vue     # 用户底部组件（含修改密码弹框）
     ├── pages/               # 页面组件
     │   ├── Login.vue        # 登录页
     │   ├── Register.vue     # 注册页
     │   ├── Home.vue         # 首页
-    │   └── ChangePassword.vue  # 修改密码页（已迁移至 UserFooter 弹框）
+    │   └── ChangePassword.vue  # 修改密码页
     ├── router/              # 路由配置
     │   └── index.ts         # 路由配置 + 守卫
     ├── store/               # 状态管理
