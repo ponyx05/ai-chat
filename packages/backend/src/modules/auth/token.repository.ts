@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { prisma } from "../lib/prisma.js";
+import { prisma } from "@/lib/prisma";
 
 export interface Token {
   id: number;
@@ -11,9 +11,6 @@ export interface Token {
 }
 
 export function hashToken(token: string): string {
-  //createHash创建一个 SHA-256 哈希器。
-  //update将 token 数据输入到这个哈希器中。
-  //digest计算出 token 的 SHA-256 哈希值，并将其以十六进制字符串的形式返回。
   return crypto.createHash("sha256").update(token).digest("hex");
 }
 

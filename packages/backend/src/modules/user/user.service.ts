@@ -1,6 +1,6 @@
-import { findUserById, updateUserPassword } from '../models/user.js';
-import { verifyPassword, hashPassword } from '../utils/password.js';
-import { createError } from '../middleware/errorHandler.js';
+import { findUserById, updateUserPassword } from "@/modules/auth/user.repository";
+import { verifyPassword, hashPassword } from "@/utils/password";
+import { createError } from "@/middleware/errorHandler";
 
 export async function changePassword(
   userId: number,

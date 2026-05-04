@@ -1,7 +1,9 @@
 import express, { Application } from "express";
 import cors from "cors";
-import { authRouter, usersRouter, chatRouter } from "./routes/index.js";
-import { errorHandler } from "./middleware/errorHandler.js";
+import authRouter from "@/modules/auth/routes";
+import usersRouter from "@/modules/user/user.routes";
+import chatRouter from "@/modules/chat/routes";
+import { errorHandler } from "@/middleware/errorHandler";
 
 const app: Application = express();
 app.use(cors());

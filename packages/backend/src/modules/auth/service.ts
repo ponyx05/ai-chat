@@ -1,8 +1,8 @@
-import { findUserByUsername, createUser } from '../models/user.js';
-import { createToken, hashToken } from '../models/token.js';
-import { generateToken } from '../utils/jwt.js';
-import { verifyPassword } from '../utils/password.js';
-import { createError } from '../middleware/errorHandler.js';
+import { findUserByUsername, createUser, findUserById } from "./user.repository";
+import { createToken, hashToken, revokeToken } from "./token.repository";
+import { generateToken } from "@/utils/jwt";
+import { verifyPassword } from "@/utils/password";
+import { createError } from "@/middleware/errorHandler";
 
 export async function register(username: string, password: string): Promise<{ userId: number; username: string }> {
   const usernameRegex = /^[a-zA-Z0-9_]{3,50}$/;
@@ -44,12 +44,10 @@ export async function login(username: string, password: string): Promise<{ token
 
 export async function logout(token: string): Promise<void> {
   const tokenHash = hashToken(token);
-  const { revokeToken } = await import('../models/token.js');
   await revokeToken(tokenHash);
 }
 
 export async function getCurrentUser(userId: number): Promise<{ userId: number; username: string; createdAt: Date }> {
-  const { findUserById } = await import('../models/user.js');
   const user = await findUserById(userId);
   if (!user) {
     throw createError('用户不存在', 404);

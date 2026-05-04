@@ -1,5 +1,5 @@
 import request from "supertest";
-import app from "../app.js";
+import app from "@/app";
 
 describe("AI Chat SSE Integration", () => {
   let userToken: string;
@@ -18,12 +18,12 @@ describe("AI Chat SSE Integration", () => {
 
   it("should return SSE stream with session and done events for new session", async () => {
     const res = await request(app)
-      .post("/api/messages")
+      .post("/api/chat/messages")
       .set("Authorization", `Bearer ${userToken}`)
       .send({ content: "Hello AI" });
 
     expect(res.status).toBe(200);
-    expect(res.headers['content-type']).toContain('text/event-stream');
+    expect(res.headers["content-type"]).toContain("text/event-stream");
 
     const body = res.text;
     expect(body).toMatch(/event: session/);
@@ -38,12 +38,12 @@ describe("AI Chat SSE Integration", () => {
 
   it("should return SSE stream with only done event for existing session", async () => {
     const res = await request(app)
-      .post("/api/messages")
+      .post("/api/chat/messages")
       .set("Authorization", `Bearer ${userToken}`)
       .send({ content: "Second message", sessionId });
 
     expect(res.status).toBe(200);
-    expect(res.headers['content-type']).toContain('text/event-stream');
+    expect(res.headers["content-type"]).toContain("text/event-stream");
 
     const body = res.text;
     expect(body).not.toMatch(/event: session/);
@@ -52,20 +52,22 @@ describe("AI Chat SSE Integration", () => {
 
   it("should verify history context by checking messages endpoint", async () => {
     const messagesRes = await request(app)
-      .get(`/api/sessions/${sessionId}/messages`)
+      .get(`/api/chat/sessions/${sessionId}/messages`)
       .set("Authorization", `Bearer ${userToken}`);
 
     expect(messagesRes.status).toBe(200);
     expect(messagesRes.body.data.data.length).toBeGreaterThanOrEqual(2);
 
-    const roles = messagesRes.body.data.data.map((m: { role: string }) => m.role);
+    const roles = messagesRes.body.data.data.map(
+      (m: { role: string }) => m.role,
+    );
     expect(roles).toContain("user");
     expect(roles).toContain("assistant");
   });
 
   it("should reject request without token", async () => {
     const res = await request(app)
-      .post("/api/messages")
+      .post("/api/chat/messages")
       .send({ content: "Hello" });
 
     expect(res.status).toBe(401);

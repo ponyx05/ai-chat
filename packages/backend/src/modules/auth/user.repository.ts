@@ -1,5 +1,5 @@
-import { prisma } from "../lib/prisma.js";
-import { hashPassword } from "../utils/password.js";
+import { prisma } from "@/lib/prisma";
+import { hashPassword } from "@/utils/password";
 
 export interface User {
   id: number;

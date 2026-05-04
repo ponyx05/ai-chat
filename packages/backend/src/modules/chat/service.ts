@@ -9,9 +9,9 @@ import {
   createMessage,
   updateMessageContent,
   findMessagesCountBySessionId,
-} from "../models/session.js";
-import { createStreamingChat, ChatMessage } from "./aiService.js";
-import { createError } from "../middleware/errorHandler.js";
+} from "./repository";
+import { createStreamingChat, ChatMessage } from "./ai.service";
+import { createError } from "@/middleware/errorHandler";
 
 export async function getSessionList(userId: number) {
   return findSessionsByUserId(userId);

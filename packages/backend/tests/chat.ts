@@ -1,6 +1,5 @@
 import request from "supertest";
-import app from "../app.js";
-import { prisma } from "../lib/prisma.js";
+import app from "@/app.js";
 
 describe("Chat API", () => {
   let userToken: string;
@@ -38,7 +37,7 @@ describe("Chat API", () => {
         .send({ content: "Hello AI assistant" });
 
       expect(res.status).toBe(200);
-      expect(res.headers['content-type']).toContain('text/event-stream');
+      expect(res.headers["content-type"]).toContain("text/event-stream");
 
       const body = res.text;
       const sessionMatch = body.match(/event: session\ndata: ({[^}]+})/);
@@ -57,7 +56,7 @@ describe("Chat API", () => {
         .send({ content: uniqueContent });
 
       expect(res.status).toBe(200);
-      expect(res.headers['content-type']).toContain('text/event-stream');
+      expect(res.headers["content-type"]).toContain("text/event-stream");
 
       const body = res.text;
       const sessionMatch = body.match(/event: session\ndata: ({[^}]+})/);
@@ -81,7 +80,7 @@ describe("Chat API", () => {
         .send({ content: "Second message", sessionId: testSessionId });
 
       expect(res.status).toBe(200);
-      expect(res.headers['content-type']).toContain('text/event-stream');
+      expect(res.headers["content-type"]).toContain("text/event-stream");
       expect(res.text).toMatch(/event: done/);
     });
 
@@ -109,7 +108,7 @@ describe("Chat API", () => {
         .send({ content: "Message to new session", sessionId: 99999 });
 
       expect(res.status).toBe(200);
-      expect(res.headers['content-type']).toContain('text/event-stream');
+      expect(res.headers["content-type"]).toContain("text/event-stream");
       const body = res.text;
       const sessionMatch = body.match(/event: session\ndata: ({[^}]+})/);
       expect(sessionMatch).not.toBeNull();
@@ -227,13 +226,15 @@ describe("Chat API", () => {
       expect(res.body.message).toBe("limit 必须介于 10-20 之间");
     });
 
-  it("should accept valid limit", async () => {
+    it("should accept valid limit", async () => {
       const createRes = await request(app)
         .post("/api/messages")
         .set("Authorization", `Bearer ${userToken}`)
         .send({ content: "Test limit content" });
       let sid: number;
-      const sessionMatch = createRes.text.match(/event: session\ndata: ({[^}]+})/);
+      const sessionMatch = createRes.text.match(
+        /event: session\ndata: ({[^}]+})/,
+      );
       if (sessionMatch) {
         const sessionData = JSON.parse(sessionMatch[1]);
         sid = sessionData.sessionId;
@@ -341,7 +342,9 @@ describe("Chat API", () => {
         .set("Authorization", `Bearer ${userToken}`)
         .send({ content: "Other user session" });
       let otherSessionId: number;
-      const sessionMatch = createRes.text.match(/event: session\ndata: ({[^}]+})/);
+      const sessionMatch = createRes.text.match(
+        /event: session\ndata: ({[^}]+})/,
+      );
       if (sessionMatch) {
         const sessionData = JSON.parse(sessionMatch[1]);
         otherSessionId = sessionData.sessionId;
@@ -364,7 +367,9 @@ describe("Chat API", () => {
         .set("Authorization", `Bearer ${userToken}`)
         .send({ content: "Test session" });
       let sessionId: number;
-      const sessionMatch = createRes.text.match(/event: session\ndata: ({[^}]+})/);
+      const sessionMatch = createRes.text.match(
+        /event: session\ndata: ({[^}]+})/,
+      );
       if (sessionMatch) {
         const sessionData = JSON.parse(sessionMatch[1]);
         sessionId = sessionData.sessionId;

@@ -6,5 +6,5 @@
 
 ## 目录结构
 
-- `packages/frontend/` - 前端工程
-- `packages/backend/` - 后端工程
+- `packages/frontend/` - 前端工程（Vue 3 + Vite）
+- `packages/backend/` - 后端工程（Express + TypeScript）
