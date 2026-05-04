@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { register, login, logout, getCurrentUser } from "./service";
+import { register, login, getCurrentUser, changePassword } from "./service";
 import { authMiddleware } from "@/middleware/auth";
 import {
   ApiResponse,
@@ -8,6 +8,7 @@ import {
   RegisterResponse,
   LoginResponse,
   UserData,
+  ChangePasswordBody,
 } from "@/types";
 
 export const registerHandler = async (
@@ -46,26 +47,6 @@ export const loginHandler = async (
   }
 };
 
-export const logoutHandler = async (
-  req: Request,
-  res: Response<ApiResponse>,
-  next: NextFunction,
-) => {
-  try {
-    const token = req.headers.authorization?.substring(7);
-    if (token) {
-      await logout(token);
-    }
-    res.json({
-      code: 200,
-      message: "登出成功",
-      data: null,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const meHandler = async (
   req: Request,
   res: Response<ApiResponse<UserData>>,
@@ -81,6 +62,24 @@ export const meHandler = async (
         username: user.username,
         createdAt: user.createdAt,
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export async function changePasswordHandler(
+  req: Request,
+  res: Response<ApiResponse>,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { oldPassword, newPassword } = req.body as ChangePasswordBody;
+    await changePassword(req.user!.userId, oldPassword, newPassword);
+    res.json({
+      code: 200,
+      message: "密码修改成功",
+      data: null,
     });
   } catch (error) {
     next(error);

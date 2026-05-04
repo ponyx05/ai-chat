@@ -79,7 +79,6 @@ export interface ChangePasswordBody {
 
 export interface JwtPayload {
   userId: number;
-  tokenId: number;
   iat?: number;
   exp?: number;
 }

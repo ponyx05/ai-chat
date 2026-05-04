@@ -17,7 +17,7 @@
 ## 目录结构
 
 ```
-packages/frontend/
+apps/frontend/
 ├── index.html              # HTML 入口
 ├── package.json            # 项目配置
 ├── tsconfig.json           # TypeScript 配置

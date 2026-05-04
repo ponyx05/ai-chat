@@ -1,7 +1,6 @@
-import { findUserByUsername, createUser, findUserById } from "./user.repository";
-import { createToken, hashToken, revokeToken } from "./token.repository";
+import { findUserByUsername, createUser, findUserById, updateUserPassword } from "./user.repository";
 import { generateToken } from "@/utils/jwt";
-import { verifyPassword } from "@/utils/password";
+import { verifyPassword, hashPassword } from "@/utils/password";
 import { createError } from "@/middleware/errorHandler";
 
 export async function register(username: string, password: string): Promise<{ userId: number; username: string }> {
@@ -34,17 +33,8 @@ export async function login(username: string, password: string): Promise<{ token
     throw createError('用户名或密码错误', 401);
   }
 
-  const { token, expiresAt } = generateToken({ userId: user.id, tokenId: 0 });
-  const tokenId = await createToken(user.id, token, expiresAt);
-
-  const finalToken = generateToken({ userId: user.id, tokenId });
-
-  return { token: finalToken.token, expiresAt: finalToken.expiresAt.toISOString() };
-}
-
-export async function logout(token: string): Promise<void> {
-  const tokenHash = hashToken(token);
-  await revokeToken(tokenHash);
+  const { token, expiresAt } = generateToken({ userId: user.id });
+  return { token, expiresAt: expiresAt.toISOString() };
 }
 
 export async function getCurrentUser(userId: number): Promise<{ userId: number; username: string; createdAt: Date }> {
@@ -53,4 +43,27 @@ export async function getCurrentUser(userId: number): Promise<{ userId: number; 
     throw createError('用户不存在', 404);
   }
   return { userId: user.id, username: user.username, createdAt: user.createdAt };
+}
+
+export async function changePassword(
+  userId: number,
+  oldPassword: string,
+  newPassword: string
+): Promise<void> {
+  if (newPassword.length < 6 || newPassword.length > 20) {
+    throw createError('新密码必须为6-20字符', 400);
+  }
+
+  const user = await findUserById(userId);
+  if (!user) {
+    throw createError('用户不存在', 404);
+  }
+
+  const isValid = await verifyPassword(oldPassword, user.passwordHash);
+  if (!isValid) {
+    throw createError('当前密码错误', 401);
+  }
+
+  const newPasswordHash = await hashPassword(newPassword);
+  await updateUserPassword(userId, newPasswordHash);
 }

@@ -18,7 +18,7 @@
 ## 目录结构
 
 ```
-packages/backend/
+apps/backend/
 ├── package.json            # 项目配置
 ├── tsconfig.json           # TypeScript 配置
 ├── jest.config.ts         # Jest 测试配置
@@ -37,20 +37,8 @@ packages/backend/
     │   │   ├── controller.ts    # 控制层：HTTP 请求处理
     │   │   ├── routes.ts        # 路由层：API 路由定义
     │   │   ├── service.ts       # 业务层：核心业务逻辑
-    │   │   ├── user.repository.ts   # 数据层：用户 DB 操作
-    │   │   └── token.repository.ts  # 数据层：令牌 DB 操作
+    │   │   └── user.repository.ts   # 数据层：用户 DB 操作
     │   ├── chat/           # 聊天模块
-    │   │   ├── ai.service.ts     # AI 模型调用
-    │   │   ├── controller.ts     # 控制层：HTTP 请求处理
-    │   │   ├── routes.ts        # 路由层：API 路由定义
-    │   │   ├── service.ts        # 业务层：核心业务逻辑
-    │   │   └── repository.ts     # 数据层：会话/消息 DB 操作
-    │   └── user/           # 用户模块
-    │       ├── controller.ts     # 控制层：HTTP 请求处理
-    │       ├── routes.ts        # 路由层：API 路由定义
-    │       └── service.ts       # 业务层：核心业务逻辑
-    ├── types/              # 类型定义
-    │   └── index.ts
     ├── utils/              # 工具函数
     │   ├── jwt.ts
     │   ├── password.ts
@@ -63,12 +51,12 @@ packages/backend/
 
 ## 四层架构
 
-| 层级 | 文件后缀 | 职责 |
-| ---- | -------- | ---- |
-| Route | `.routes.ts` | 定义 API 路径、请求方法，将请求分发到 Controller |
-| Controller | `.controller.ts` | 接收 HTTP 请求，参数校验，调用 Service，封装响应 |
-| Service | `.service.ts` | 实现业务逻辑（权限判断、业务规则），不直接接触数据库 |
-| Repository | `.repository.ts` | 封装数据库 CRUD 操作，隐藏数据库查询细节 |
+| 层级       | 文件后缀         | 职责                                                 |
+| ---------- | ---------------- | ---------------------------------------------------- |
+| Route      | `.routes.ts`     | 定义 API 路径、请求方法，将请求分发到 Controller     |
+| Controller | `.controller.ts` | 接收 HTTP 请求，参数校验，调用 Service，封装响应     |
+| Service    | `.service.ts`    | 实现业务逻辑（权限判断、业务规则），不直接接触数据库 |
+| Repository | `.repository.ts` | 封装数据库 CRUD 操作，隐藏数据库查询细节             |
 
 ## 环境变量
 
@@ -99,24 +87,25 @@ OPENAI_MODEL=MiniMax-M2.7
 | ---- | ------------------ | ------------ |
 | POST | /api/auth/register | 用户注册     |
 | POST | /api/auth/login    | 用户登录     |
-| POST | /api/auth/logout   | 用户登出     |
 | GET  | /api/auth/me       | 获取当前用户 |
+
+> 注意：logout 为客户端行为（删除本地 token），无需调用 API
 
 ### 用户接口
 
-| 方法 | 路径                | 说明     |
-| ---- | ------------------- | -------- |
-| PUT  | /api/users/password | 修改密码 |
+| 方法 | 路径               | 说明     |
+| ---- | ------------------ | -------- |
+| PUT  | /api/auth/password | 修改密码 |
 
 ### 聊天接口
 
-| 方法   | 路径                              | 说明             |
-| ------ | --------------------------------- | ---------------- |
-| GET    | /api/chat/sessions                | 获取会话列表     |
-| PUT    | /api/chat/sessions/:id           | 修改会话标题     |
-| DELETE | /api/chat/sessions/:id           | 删除会话         |
-| GET    | /api/chat/sessions/:sessionId/messages | 获取消息列表 |
-| POST   | /api/chat/messages               | 发送消息（SSE）  |
+| 方法   | 路径                                   | 说明            |
+| ------ | -------------------------------------- | --------------- |
+| GET    | /api/chat/sessions                     | 获取会话列表    |
+| PUT    | /api/chat/sessions/:id                 | 修改会话标题    |
+| DELETE | /api/chat/sessions/:id                 | 删除会话        |
+| GET    | /api/chat/sessions/:sessionId/messages | 获取消息列表    |
+| POST   | /api/chat/messages                     | 发送消息（SSE） |
 
 ## 注意事项
 

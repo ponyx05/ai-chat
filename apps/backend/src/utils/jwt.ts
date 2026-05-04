@@ -4,7 +4,7 @@ import { JwtPayload } from '@/types';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 const JWT_EXPIRES_IN = '7d';
 
-export function generateToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): { token: string; expiresAt: Date } {
+export function generateToken(payload: { userId: number }): { token: string; expiresAt: Date } {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 7);
 

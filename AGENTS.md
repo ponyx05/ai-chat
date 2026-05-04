@@ -6,5 +6,5 @@
 
 ## 目录结构
 
-- `packages/frontend/` - 前端工程（Vue 3 + Vite）
-- `packages/backend/` - 后端工程（Express + TypeScript）
+- `apps/frontend/` - 前端工程（Vue 3 + Vite）
+- `apps/backend/` - 后端工程（Express + TypeScript + Prisma + MariaDB）
