@@ -11,9 +11,9 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api", chatRouter);
 
-app.get("/", (_req, res) => {
-  res.json({ message: "AI Chat Backend" });
-});
+// app.get("/", (_req, res) => {
+//   res.json({ message: "AI Chat Backend" });
+// });
 
 app.use(errorHandler);
 

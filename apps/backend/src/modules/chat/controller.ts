@@ -24,10 +24,10 @@ export async function getSessionListHandler(
     res.json({
       code: 200,
       message: "success",
-      data: sessions.map((s) => ({
-        id: s.id,
-        title: s.title,
-        updatedAt: s.updatedAt,
+      data: sessions.map((session) => ({
+        id: session.id,
+        title: session.title,
+        updatedAt: session.updatedAt,
       })),
     });
   } catch (error) {
