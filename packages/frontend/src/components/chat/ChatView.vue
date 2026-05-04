@@ -83,17 +83,23 @@ onUnmounted(() => {
     <div class="main-content">
       <WelcomeView v-if="!hasStartedChat" @send="handleSendMessage" />
       <template v-else>
-        <div ref="messageListRef" class="message-list">
-          <template v-for="(msg, index) in chatStore.messages" :key="msg.id">
-            <MessageBubble v-if="msg.role === 'user'" :content="msg.content" />
-            <AssistantMessage v-else :content="msg.content"
-              :is-loading="index === chatStore.messages.length - 1 && msg.role === 'assistant' && chatStore.isAIThinking" />
-          </template>
+        <div v-if="chatStore.isLoading" class="loading-container">
+          <a-spin size="large" />
         </div>
-        <ScrollToBottom :visible="showScrollButton" @scroll-to-bottom="scrollToBottom" />
-        <div class="message-container">
-          <MessageInput placeholder="有问题，尽管问" @send="handleSendMessage" />
-        </div>
+        <template v-else>
+          <div ref="messageListRef" class="message-list">
+            <template v-for="(msg, index) in chatStore.messages" :key="msg.id">
+              <MessageBubble v-if="msg.role === 'user'" :content="msg.content" />
+              <AssistantMessage v-else :content="msg.content"
+                :is-loading="index === chatStore.messages.length - 1 && msg.role === 'assistant' && chatStore.isAIThinking" />
+            </template>
+          </div>
+          <ScrollToBottom :visible="showScrollButton" @scroll-to-bottom="scrollToBottom" />
+          <div class="message-container">
+            <MessageInput placeholder="有问题，尽管问" :disabled="isSending || chatStore.isAIThinking"
+              @send="handleSendMessage" />
+          </div>
+        </template>
       </template>
     </div>
   </div>
@@ -124,5 +130,12 @@ onUnmounted(() => {
 .message-container {
   border-top: 1px solid #e8e8e8;
   padding: 16px 24px;
+}
+
+.loading-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

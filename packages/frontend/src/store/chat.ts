@@ -120,9 +120,15 @@ export const useChatStore = defineStore("chat", () => {
             sessionId = newSessionId;
             isNewSession = true;
           },
-          onDone: (newMessageId) => {
+          onDone: async (newMessageId) => {
             isAIThinking.value = false;
             messageId = newMessageId;
+            const currentIdx = sessions.value.findIndex(
+              (s) => s.id === sessionId,
+            );
+            if (isNewSession || currentIdx > 0) {
+              await fetchSessions();
+            }
             resolve();
           },
           onError: (error) => {
@@ -137,10 +143,6 @@ export const useChatStore = defineStore("chat", () => {
     }
 
     currentSessionId.value = sessionId;
-
-    if (isNewSession) {
-      await fetchSessions();
-    }
 
     const lastMsg = messages.value[messages.value.length - 1];
     if (lastMsg?.role === "assistant") {

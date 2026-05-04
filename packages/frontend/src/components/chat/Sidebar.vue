@@ -15,7 +15,6 @@ defineProps<Props>()
 
 const router = useRouter()
 const authStore = useAuthStore()
-const sessionListRef = ref<InstanceType<typeof SessionList> | null>(null)
 
 const emit = defineEmits<{
   newChat: []
@@ -41,11 +40,7 @@ const handleLogout = async () => {
     <div class="sidebar-header">
       <NewChatButton @new-chat="handleNewChat" />
     </div>
-    <SessionList
-      ref="sessionListRef"
-      @session-select="handleSessionSelect"
-      @new-chat="handleNewChat"
-    />
+    <SessionList @session-select="handleSessionSelect" @new-chat="handleNewChat" />
     <UserFooter @logout="handleLogout" />
   </div>
 </template>

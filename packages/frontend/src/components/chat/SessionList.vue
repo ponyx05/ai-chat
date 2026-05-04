@@ -8,7 +8,6 @@ import type { Session } from '../../types/chat'
 const chatStore = useChatStore()
 
 const sessions = computed(() => chatStore.sessions)
-const loading = computed(() => chatStore.isLoading)
 const currentSessionId = computed(() => chatStore.currentSessionId)
 
 const emit = defineEmits<{
@@ -49,10 +48,7 @@ defineExpose({
 
 <template>
   <div class="session-list">
-    <div v-if="loading" class="loading">
-      <a-spin size="small" />
-    </div>
-    <div v-else-if="sessions.length === 0" class="empty">
+    <div v-if="sessions.length === 0" class="empty">
       暂无会话
     </div>
     <template v-else>
@@ -70,7 +66,6 @@ defineExpose({
   padding: 8px 0;
 }
 
-.loading,
 .empty {
   display: flex;
   justify-content: center;
