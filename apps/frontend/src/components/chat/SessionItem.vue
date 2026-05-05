@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
 import { DeleteOutlined, MoreOutlined, EditOutlined } from '@ant-design/icons-vue'
+import { Modal } from 'ant-design-vue'
 import { InputRef } from 'ant-design-vue/es/vc-input/inputProps';
 
 interface Session {
@@ -23,6 +24,19 @@ const emit = defineEmits<{
 const isEditing = ref(false)
 const editTitle = ref('')
 const editInputRef = ref<InputRef>()
+const deleteModalVisible = ref(false)
+const deleteLoading = ref(false)
+
+const showDeleteModal = () => {
+  deleteModalVisible.value = true
+}
+
+const handleDeleteConfirm = async () => {
+  deleteLoading.value = true
+  emit('delete', props.session.id)
+  deleteLoading.value = false
+  deleteModalVisible.value = false
+}
 
 const confirmEdit = () => {
   if (editTitle.value.trim() && editTitle.value !== props.session.title) {
@@ -43,7 +57,7 @@ const handleMenuClick = (key: string) => {
       editInputRef.value?.select()
     })
   } else if (key === 'delete') {
-    emit('delete', props.session.id)
+    showDeleteModal()
   }
 }
 
@@ -70,6 +84,10 @@ const handleClick = () => {
         </a-menu>
       </template>
     </a-dropdown>
+    <Modal v-model:open="deleteModalVisible" title="确定删除对话？" :confirm-loading="deleteLoading" @ok="handleDeleteConfirm"
+      ok-text="确认" cancel-text="取消">
+      删除后，聊天记录将不可恢复。
+    </Modal>
   </div>
 </template>
 

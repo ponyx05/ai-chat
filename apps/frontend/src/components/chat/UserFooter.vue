@@ -23,6 +23,8 @@ const items = [
 ]
 
 const passwordModalVisible = ref(false)
+const logoutModalVisible = ref(false)
+const logoutLoading = ref(false)
 const formState = ref({
   oldPassword: '',
   newPassword: ''
@@ -31,15 +33,23 @@ const loading = ref(false)
 
 const handleMenuClick = async ({ key }: { key: string }) => {
   if (key === 'logout') {
-    try {
-      await authStore.logout()
-      message.success('登出成功')
-      router.push('/login')
-    } catch {
-      message.error('登出失败')
-    }
+    logoutModalVisible.value = true
   } else if (key === 'changePassword') {
     passwordModalVisible.value = true
+  }
+}
+
+const handleLogoutConfirm = async () => {
+  logoutLoading.value = true
+  try {
+    await authStore.logout()
+    message.success('登出成功')
+    router.push('/login')
+  } catch {
+    message.error('登出失败')
+  } finally {
+    logoutLoading.value = false
+    logoutModalVisible.value = false
   }
 }
 
@@ -99,6 +109,10 @@ const handlePasswordCancel = () => {
           <a-input-password v-model:value="formState.newPassword" placeholder="请输入新密码（6-20字符）" size="large" />
         </a-form-item>
       </a-form>
+    </Modal>
+    <Modal v-model:open="logoutModalVisible" title="确认退出登录？" :confirm-loading="logoutLoading" @ok="handleLogoutConfirm"
+      ok-text="确认" cancel-text="取消">
+      退出登录不会丢失任何数据，你仍可以登录此账号。
     </Modal>
   </div>
 </template>
