@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { register, login, getCurrentUser, changePassword } from "./service";
-import { authMiddleware } from "@/middleware/auth";
 import {
   ApiResponse,
   RegisterBody,
@@ -47,6 +46,18 @@ export const loginHandler = async (
   }
 };
 
+export const logoutHandler = async (
+  req: Request,
+  res: Response<ApiResponse>,
+  next: NextFunction,
+) => {
+  res.json({
+    code: 200,
+    message: "登出成功",
+    data: null,
+  });
+};
+
 export const meHandler = async (
   req: Request,
   res: Response<ApiResponse<UserData>>,
@@ -71,7 +82,7 @@ export const meHandler = async (
 export async function changePasswordHandler(
   req: Request,
   res: Response<ApiResponse>,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const { oldPassword, newPassword } = req.body as ChangePasswordBody;
@@ -84,6 +95,4 @@ export async function changePasswordHandler(
   } catch (error) {
     next(error);
   }
-};
-
-export { authMiddleware };
+}

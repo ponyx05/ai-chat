@@ -115,13 +115,7 @@ export async function findMessagesBySessionId(
   const resultMessages = hasMore ? messages.slice(0, -1) : messages;
 
   return {
-    messages: resultMessages.map((m) => ({
-      id: m.id,
-      sessionId: m.sessionId,
-      role: m.role as "user" | "assistant",
-      content: m.content,
-      createdAt: m.createdAt,
-    })),
+    messages: resultMessages as Message[],
     hasMore,
   };
 }
@@ -158,12 +152,4 @@ export async function updateMessageContent(
     content: message.content,
     createdAt: message.createdAt,
   };
-}
-
-export async function findMessagesCountBySessionId(
-  sessionId: number,
-): Promise<number> {
-  return prisma.message.count({
-    where: { sessionId },
-  });
 }

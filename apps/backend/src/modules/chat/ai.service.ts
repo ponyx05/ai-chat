@@ -19,10 +19,8 @@ function createMockStream(): AsyncIterable<any> {
   return mockGenerator();
 }
 
-export async function createStreamingChat(
-  messages: ChatMessage[],
-  model?: string,
-) {
+export async function createStreamingChat(messages: ChatMessage[]) {
+  // 测试代码
   if (process.env.NODE_ENV === "test" || process.env.USE_MOCK_AI === "true") {
     return createMockStream();
   }
@@ -32,12 +30,20 @@ export async function createStreamingChat(
     throw new Error("OPENAI_API_KEY 未配置或无效，请配置真实的 API Key");
   }
 
+  /** 
+   * 模型的系统提示词
+   * message:[{
+      "role": "system",
+      "name": "MiniMax AI"
+      "content":""
+    }],
+   */
   const response = await openai.chat.completions.create({
-    model: model || (process.env.OPENAI_MODEL as string),
-    messages: messages.map((m) => ({
-      role: m.role,
-      content: m.content,
-      ...(m.name ? { name: m.name } : {}),
+    model: process.env.OPENAI_MODEL as string,
+    messages: messages.map((message) => ({
+      role: message.role,
+      content: message.content,
+      ...(message.name ? { name: message.name } : {}),
     })),
     stream: true,
     temperature: 0.3,

@@ -74,7 +74,7 @@ export const useChatStore = defineStore("chat", () => {
     messages.value.push(userMessage);
 
     isAIThinking.value = true;
-    // 回复加载状态依赖messages中最后一项且为ai回复的数据因此添加占位数据，维持加载状态
+    // 回复加载状态依赖messages中最后一项且为ai回复的数据，因此添加占位数据，维持加载状态
     const dummyAIMessage: Message = {
       id: -1,
       role: "assistant",
@@ -84,30 +84,31 @@ export const useChatStore = defineStore("chat", () => {
     messages.value.push(dummyAIMessage);
 
     let sessionId = currentSessionId.value;
-    let messageId: number | null = null;
     let fullContent = "";
-    let isNewSession = false;
 
     await new Promise<void>((resolve, reject) => {
       sendMessageSSE(
         { sessionId: sessionId || undefined, content },
         {
           onChunk: (chunk) => {
-            console.log({ chunk });
-
-            fullContent += chunk;
+            // console.log({ chunk });
             if (chunk.includes("</think>")) {
-              // 清除临时占位
               isAIThinking.value = false;
+              // 清除临时占位
               messages.value.splice(
                 messages.value.findIndex((item) => item.id === -1),
                 1,
               );
             }
+
+            fullContent += chunk;
+
             const lastMsg = messages.value[messages.value.length - 1];
             if (lastMsg?.role === "assistant") {
+              // 拿到引用，前端分片拼接关键
               lastMsg.content = fullContent;
             } else {
+              // dummyAIMessage清除后进入此分支，添加AI回复Message后上面才能拿引用
               messages.value.push({
                 id: Date.now(),
                 role: "assistant",
@@ -116,19 +117,18 @@ export const useChatStore = defineStore("chat", () => {
               });
             }
           },
-          onSession: (newSessionId) => {
+          onSession: async (newSessionId) => {
             sessionId = newSessionId;
-            isNewSession = true;
+            await fetchSessions();
+            resolve();
           },
-          onDone: async (newMessageId) => {
+          onDone: async () => {
             isAIThinking.value = false;
-            messageId = newMessageId;
             const currentIdx = sessions.value.findIndex(
-              (s) => s.id === sessionId,
+              (session) => session.id === sessionId,
             );
-            if (isNewSession || currentIdx > 0) {
-              await fetchSessions();
-            }
+
+            if (currentIdx > 0) await fetchSessions();
             resolve();
           },
           onError: (error) => {
@@ -143,13 +143,6 @@ export const useChatStore = defineStore("chat", () => {
     }
 
     currentSessionId.value = sessionId;
-
-    const lastMsg = messages.value[messages.value.length - 1];
-    if (lastMsg?.role === "assistant") {
-      lastMsg.id = messageId!;
-    }
-
-    return lastMsg;
   };
 
   return {

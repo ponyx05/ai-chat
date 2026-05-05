@@ -8,7 +8,6 @@ import {
   findMessagesBySessionId,
   createMessage,
   updateMessageContent,
-  findMessagesCountBySessionId,
 } from "./repository";
 import { createStreamingChat, ChatMessage } from "./ai.service";
 import { createError } from "@/middleware/errorHandler";
@@ -78,45 +77,34 @@ export async function sendMessage(
   isNewSession: boolean;
   assistantMessageId?: number;
 }> {
-  let currentSessionId = sessionId;
   let isNewSession = false;
 
-  if (currentSessionId) {
-    const session = await findSessionById(currentSessionId);
+  if (sessionId) {
+    const session = await findSessionById(sessionId);
     if (!session || session.userId !== userId) {
-      currentSessionId = undefined;
+      sessionId = undefined;
     }
   }
 
-  if (!currentSessionId) {
+  if (!sessionId) {
     const title = content.slice(0, 10);
     const session = await createSession(userId, title);
-    currentSessionId = session.id;
+    sessionId = session.id;
     isNewSession = true;
   }
 
-  await createMessage(currentSessionId, "user", content);
-
-  const count = await findMessagesCountBySessionId(currentSessionId);
-  if (count === 1) {
-    const title = content.slice(0, 10);
-    await updateSessionTitle(currentSessionId, title);
-  }
+  await createMessage(sessionId, "user", content);
 
   const { messages: historyMessages } =
-    await findMessagesBySessionId(currentSessionId);
+    await findMessagesBySessionId(sessionId);
   const aiMessages: ChatMessage[] = historyMessages.map((message) => ({
     role: message.role,
     content: message.content,
-    name: message.role === "user" ? "用户" : undefined,
+    name: message.role === "user" ? "用户" : "MiniMax AI",
   }));
 
   const stream = await createStreamingChat(aiMessages);
-  const assistantMessage = await createMessage(
-    currentSessionId,
-    "assistant",
-    "",
-  );
+  const assistantMessage = await createMessage(sessionId, "assistant", "");
   const chunks: string[] = [];
 
   for await (const chunk of stream) {
@@ -128,10 +116,10 @@ export async function sendMessage(
   }
 
   await updateMessageContent(assistantMessage.id, chunks.join(""));
-  await updateSessionUpdatedAt(currentSessionId);
+  await updateSessionUpdatedAt(sessionId);
 
   return {
-    sessionId: currentSessionId,
+    sessionId,
     isNewSession,
     assistantMessageId: assistantMessage.id,
   };

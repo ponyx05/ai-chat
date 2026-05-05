@@ -160,9 +160,6 @@ export async function sendMessageHandler(
       );
     }
 
-    res.write(
-      `event: done\ndata: ${JSON.stringify({ id: result.assistantMessageId })}\n\n`,
-    );
     res.end();
   } catch (error) {
     next(error);

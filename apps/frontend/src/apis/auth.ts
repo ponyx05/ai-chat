@@ -1,5 +1,10 @@
 import request, { type ApiResponse } from './request'
 
+export interface ChangePasswordReq {
+  oldPassword: string
+  newPassword: string
+}
+
 export interface LoginReq {
   username: string
   password: string
@@ -40,4 +45,8 @@ export const logout = () => {
 
 export const getCurrentUser = () => {
   return request.get<any, { data: ApiResponse<UserInfo> }>('/auth/me')
+}
+
+export const changePassword = (data: ChangePasswordReq) => {
+  return request.put<any, { data: ApiResponse<null> }>('/users/password', data)
 }

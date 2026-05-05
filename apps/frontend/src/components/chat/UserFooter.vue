@@ -4,7 +4,7 @@ import { Dropdown, Modal, message } from 'ant-design-vue'
 import { UserOutlined, UpOutlined } from '@ant-design/icons-vue'
 import { useAuthStore } from '../../store/auth'
 import { useRouter } from 'vue-router'
-import { changePassword } from '../../apis/user'
+import { changePassword } from '../../apis/auth'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -33,10 +33,10 @@ const handleMenuClick = async ({ key }: { key: string }) => {
   if (key === 'logout') {
     try {
       await authStore.logout()
-      message.success('退出登录成功')
+      message.success('登出成功')
       router.push('/login')
     } catch {
-      message.error('退出登录失败')
+      message.error('登出失败')
     }
   } else if (key === 'changePassword') {
     passwordModalVisible.value = true

@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import NewChatButton from './NewChatButton.vue'
 import SessionList from './SessionList.vue'
 import UserFooter from './UserFooter.vue'
 import { useAuthStore } from '../../store/auth'
-import type { Session } from '../../apis/session'
+import { Session } from '../../types/chat'
 
 interface Props {
   username?: string

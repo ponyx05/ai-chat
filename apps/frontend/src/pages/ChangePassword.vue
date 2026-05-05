@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter, type Router } from 'vue-router'
 import { message } from 'ant-design-vue'
-import { changePassword } from '../apis/user'
+import { changePassword } from '../apis/auth'
 
 const router: Router = useRouter()
 
