@@ -39,6 +39,11 @@ apps/backend/
     │   │   ├── service.ts       # 业务层：核心业务逻辑
     │   │   └── user.repository.ts   # 数据层：用户 DB 操作
     │   ├── chat/           # 聊天模块
+    │   │   ├── controller.ts  # 控制层
+    │   │   ├── routes.ts      # 路由层
+    │   │   ├── service.ts     # 业务层
+    │   │   ├── ai.service.ts   # AI 服务
+    │   │   └── repository.ts  # 数据层
     ├── utils/              # 工具函数
     │   ├── jwt.ts
     │   ├── password.ts
@@ -87,9 +92,8 @@ OPENAI_MODEL=MiniMax-M2.7
 | ---- | ------------------ | ------------ |
 | POST | /api/auth/register | 用户注册     |
 | POST | /api/auth/login    | 用户登录     |
+| POST | /api/auth/logout   | 用户登出     |
 | GET  | /api/auth/me       | 获取当前用户 |
-
-> 注意：logout 为客户端行为（删除本地 token），无需调用 API
 
 ### 用户接口
 

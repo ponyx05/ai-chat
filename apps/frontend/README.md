@@ -27,6 +27,7 @@ apps/frontend/
     ├── main.ts              # 入口文件
     ├── App.vue              # 根组件
     ├── env.d.ts             # Vue 类型声明
+    ├── eventBus.ts          # 事件总线
     ├── apis/                # API 接口层
     │   ├── request.ts       # axios 封装
     │   ├── auth.ts          # 认证 API
@@ -34,19 +35,19 @@ apps/frontend/
     │   └── index.ts         # 统一导出
     ├── components/          # 公共组件
     │   ├── ErrorProvider.vue # 全局错误处理
-    │   └── chat/             # 聊天组件
+    │   └── chat/             # 聊天组件（12个）
     │       ├── index.ts           # 统一导出
-    │       ├── ChatView.vue       # 主聊天视图
-    │       ├── Sidebar.vue        # 侧边栏
-    │       ├── SessionList.vue    # 会话列表
-    │       ├── SessionItem.vue    # 会话项
-    │       ├── MessageBubble.vue  # 用户消息气泡
     │       ├── AssistantMessage.vue  # AI 消息气泡
+    │       ├── ChatView.vue       # 主聊天视图
+    │       ├── MessageBubble.vue  # 用户消息气泡
     │       ├── MessageInput.vue   # 消息输入框
-    │       ├── WelcomeView.vue    # 欢迎页
-    │       ├── ScrollToBottom.vue # 滚动到底部
     │       ├── NewChatButton.vue  # 新建聊天按钮
-    │       └── UserFooter.vue     # 用户底部组件（含修改密码弹框）
+    │       ├── ScrollToBottom.vue # 滚动到底部
+    │       ├── SessionItem.vue    # 会话项
+    │       ├── SessionList.vue    # 会话列表
+    │       ├── Sidebar.vue        # 侧边栏
+    │       ├── UserFooter.vue     # 用户底部组件（含修改密码弹框）
+    │       └── WelcomeView.vue    # 欢迎页
     ├── pages/               # 页面组件
     │   ├── Login.vue        # 登录页
     │   ├── Register.vue     # 注册页
@@ -56,7 +57,10 @@ apps/frontend/
     │   └── index.ts         # 路由配置 + 守卫
     ├── store/               # 状态管理
     │   ├── auth.ts          # 认证状态管理
+    │   ├── chat.ts          # 聊天状态管理
     │   └── index.ts         # 统一导出
+    ├── types/              # 类型定义
+    │   └── chat.ts          # 聊天相关类型
     └── utils/               # 工具函数
         ├── storage.ts       # 本地存储工具
         └── index.ts         # 统一导出
