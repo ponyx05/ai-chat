@@ -99,24 +99,15 @@ export async function deleteSession(id: number): Promise<void> {
 
 export async function findMessagesBySessionId(
   sessionId: number,
-  cursor?: Date,
-  limit?: number,
-): Promise<{ messages: Message[]; hasMore: boolean }> {
+): Promise<{ messages: Message[] }> {
   const messages = await prisma.message.findMany({
     where: {
       sessionId,
-      ...(cursor ? { createdAt: { lt: cursor } } : {}),
     },
     orderBy: { createdAt: "asc" },
-    take: (limit || 20) + 1,
   });
-
-  const hasMore = messages.length > (limit || 20);
-  const resultMessages = hasMore ? messages.slice(0, -1) : messages;
-
   return {
-    messages: resultMessages as Message[],
-    hasMore,
+    messages: messages as Message[],
   };
 }
 

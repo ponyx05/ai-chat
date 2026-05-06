@@ -82,44 +82,18 @@ export async function getSessionMessagesHandler(
   next: NextFunction,
 ) {
   try {
-    const sessionId = parseInt(req.params.sessionId);
-    const { cursor, limit } = req.query as GetMessagesQuery;
-
-    let parsedLimit: number | undefined;
-    if (limit !== undefined) {
-      const numericLimit = Number(limit);
-      if (!numericLimit || numericLimit < 10 || numericLimit > 20) {
-        throw createError("limit 必须介于 10-20 之间", 400);
-      }
-      parsedLimit = numericLimit;
-    }
-
-    let parsedCursor: Date | undefined;
-    if (cursor) {
-      parsedCursor = new Date(cursor);
-      if (isNaN(parsedCursor.getTime())) {
-        throw createError("cursor 格式无效", 400);
-      }
-    }
-
-    const result = await getSessionMessages(
-      sessionId,
-      req.user!.userId,
-      parsedCursor,
-      parsedLimit,
-    );
-
+    const sessionId = +req.params.sessionId;
+    const result = await getSessionMessages(sessionId, req.user!.userId);
     res.json({
       code: 200,
       message: "success",
       data: {
-        data: result.messages.map((m) => ({
-          id: m.id,
-          role: m.role,
-          content: m.content,
-          createdAt: m.createdAt,
+        data: result.messages.map((message) => ({
+          id: message.id,
+          role: message.role,
+          content: message.content,
+          createdAt: message.createdAt,
         })),
-        pagination: result.pagination,
       },
     });
   } catch (error) {

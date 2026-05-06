@@ -42,12 +42,7 @@ export async function removeSession(sessionId: number, userId: number) {
   await deleteSession(sessionId);
 }
 
-export async function getSessionMessages(
-  sessionId: number,
-  userId: number,
-  cursor?: Date,
-  limit?: number,
-) {
+export async function getSessionMessages(sessionId: number, userId: number) {
   const session = await findSessionById(sessionId);
   if (!session) {
     throw createError("会话不存在", 404);
@@ -55,16 +50,9 @@ export async function getSessionMessages(
   if (session.userId !== userId) {
     throw createError("无权操作此会话", 403);
   }
-  const { messages, hasMore } = await findMessagesBySessionId(
-    sessionId,
-    cursor,
-    limit,
-  );
-  const nextCursor =
-    hasMore && messages.length > 0
-      ? messages[messages.length - 1].createdAt.toISOString()
-      : null;
-  return { messages, pagination: { hasMore, nextCursor } };
+  const { messages } = await findMessagesBySessionId(sessionId);
+
+  return { messages };
 }
 
 export async function sendMessage(
@@ -97,6 +85,7 @@ export async function sendMessage(
 
   const { messages: historyMessages } =
     await findMessagesBySessionId(sessionId);
+
   const aiMessages: ChatMessage[] = historyMessages.map((message) => ({
     role: message.role,
     content: message.content,

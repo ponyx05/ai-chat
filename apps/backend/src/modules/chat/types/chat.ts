@@ -6,7 +6,7 @@ export interface SessionData {
 
 export interface MessageData {
   id: number;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   createdAt: Date;
 }
@@ -23,7 +23,7 @@ export interface MessagesPagination {
 
 export interface MessagesResponse {
   data: MessageData[];
-  pagination: MessagesPagination;
+  // pagination: MessagesPagination;
 }
 
 export interface SendMessageBody {
