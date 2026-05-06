@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { register, login, getCurrentUser, changePassword } from "./service";
+import { ApiResponse } from "@/types/api-response";
 import {
-  ApiResponse,
   RegisterBody,
   LoginBody,
   RegisterResponse,
   LoginResponse,
   UserData,
   ChangePasswordBody,
-} from "@/types";
+} from "@/modules/auth/types/user";
 
 export const registerHandler = async (
   req: Request,

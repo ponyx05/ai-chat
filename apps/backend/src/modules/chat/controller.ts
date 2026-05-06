@@ -6,12 +6,12 @@ import {
   getSessionMessages,
   sendMessage,
 } from "./service";
+import { ApiResponse } from "@/types/api-response";
 import {
-  ApiResponse,
   SessionData,
   GetMessagesQuery,
   MessagesResponse,
-} from "@/types";
+} from "@/modules/chat/types/chat";
 import { createError } from "@/middleware/errorHandler";
 
 export async function getSessionListHandler(

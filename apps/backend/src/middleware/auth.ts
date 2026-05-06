@@ -1,18 +1,18 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '@/utils/jwt';
-import { ApiResponse } from '@/types';
+import { Request, Response, NextFunction } from "express";
+import { verifyToken } from "@/utils/jwt";
+import { ApiResponse } from "@/types/api-response";
 
 export function authMiddleware(
   req: Request,
   res: Response<ApiResponse>,
-  next: NextFunction
+  next: NextFunction,
 ): void {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).json({
       code: 401,
-      message: '未登录或token无效',
+      message: "未登录或token无效",
       data: null,
     });
     return;
@@ -27,7 +27,7 @@ export function authMiddleware(
   } catch {
     res.status(401).json({
       code: 401,
-      message: 'token无效或已过期',
+      message: "token无效或已过期",
       data: null,
     });
   }

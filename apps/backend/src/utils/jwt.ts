@@ -1,10 +1,13 @@
-import jwt from 'jsonwebtoken';
-import { JwtPayload } from '@/types';
+import jwt from "jsonwebtoken";
+import { JwtPayload } from "@/utils/types/jwt";
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-const JWT_EXPIRES_IN = '7d';
+const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_EXPIRES_IN = "7d";
 
-export function generateToken(payload: { userId: number }): { token: string; expiresAt: Date } {
+export function generateToken(payload: { userId: number }): {
+  token: string;
+  expiresAt: Date;
+} {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 7);
 
