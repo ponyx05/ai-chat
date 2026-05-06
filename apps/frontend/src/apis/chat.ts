@@ -74,7 +74,7 @@ export const sendMessageSSE = (
 
           let buffer = "";
           buffer += decoder.decode(value, { stream: true });
-          console.log({ buffer });
+          // console.log({ buffer });
 
           buffer = buffer.replaceAll("\n\n", "");
 

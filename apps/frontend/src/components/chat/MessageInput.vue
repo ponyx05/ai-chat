@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { InputRef } from 'ant-design-vue/es/vc-input/inputProps';
+import { onMounted, ref } from 'vue'
 
 interface Props {
   placeholder?: string
@@ -23,13 +24,18 @@ const handleSend = () => {
   emit('send', content)
   inputValue.value = ''
 }
+
+const textareaRef = ref<HTMLTextAreaElement>()
+onMounted(() => {
+  textareaRef.value?.focus()
+})
 </script>
 
 <template>
   <div class="message-input-wrapper">
     <div class="message-input-container">
-      <textarea v-model="inputValue" class="message-input" :placeholder="placeholder" :disabled="disabled"
-        @keyup.enter.prevent="handleSend" />
+      <textarea ref="textareaRef" v-model="inputValue" class="message-input" :placeholder="placeholder"
+        :disabled="disabled" @keyup.enter.prevent="handleSend" />
       <button class="send-btn" type="button" :disabled="disabled || !inputValue.trim()" @click="handleSend">
         →
       </button>

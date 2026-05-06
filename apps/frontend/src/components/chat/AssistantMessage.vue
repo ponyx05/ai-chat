@@ -30,35 +30,13 @@ const md: MarkdownIt = new MarkdownIt({
   }
 })
 
-const renderMarkdown = (content: string): string => {
-  let skipMode = false
+const renderMarkdown = (content: string): string | void => {
+  if (!content) return
   let result = ''
-  let i = 0
 
-  while (i < content.length) {
-    if (skipMode) {
-      const endTagIndex = content.indexOf('</think>', i)
-      if (endTagIndex !== -1) {
-        i = endTagIndex + '</think>'.length
-        skipMode = false
-      } else {
-        break
-      }
-    } else {
-      const startTagIndex = content.indexOf('<think>', i)
-      if (startTagIndex === -1) {
-        result += content.slice(i)
-        break
-      } else if (startTagIndex === i) {
-        i += '<think>'.length
-        skipMode = true
-      } else {
-        result += content.slice(i, startTagIndex)
-        i = startTagIndex + '<think>'.length
-        skipMode = true
-      }
-    }
-  }
+  result = content.split('</think>\n\n')[1]
+  if (!result) content.split('</think>')[1]
+  if (!result) return//说明还没思考完进入该if
 
   return md.render(result)
 }

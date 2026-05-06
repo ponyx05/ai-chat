@@ -127,8 +127,7 @@ export const useChatStore = defineStore("chat", () => {
             const currentIdx = sessions.value.findIndex(
               (session) => session.id === sessionId,
             );
-
-            if (currentIdx > 0) await fetchSessions();
+            if (currentIdx > 0) await fetchSessions(); //更新排序
             resolve();
           },
           onError: (error) => {
