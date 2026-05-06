@@ -52,11 +52,11 @@ const handleSendMessage = async (content: string) => {
 }
 
 const isAiMessageLoading = (index: number, role: string) => {
-  return chatStore.aiReplyingSessionId === chatStore.currentSessionId && index === chatStore.messages.length - 1 && role === 'assistant' && chatStore.isAIThinking
+  return chatStore.aiReplyingSessionId === chatStore.currentSessionId && index === (chatStore.currentSession?.messages.length ?? 0) - 1 && role === 'assistant' && chatStore.isAIThinking
 }
 
 
-watch(() => chatStore.messages.length, () => {
+watch(() => chatStore.currentSession?.messages.length, () => {
   nextTick(() => {
     if (isAtBottom.value) {
       scrollToBottom()
@@ -67,7 +67,6 @@ watch(() => chatStore.messages.length, () => {
 })
 
 onUpdated(() => {
-  console.log('onUpdated');
   // console.log({ sessionAI: chatStore.sessions });
 
   messageListRef.value?.scrollTo({
@@ -97,7 +96,7 @@ onUnmounted(() => {
         </div>
         <template v-else>
           <div ref="messageListRef" class="message-list">
-            <template v-for="(msg, index) in chatStore.messages" :key="msg.id">
+            <template v-for="(msg, index) in chatStore.currentSession?.messages" :key="msg.id">
               <MessageBubble v-if="msg.role === 'user'" :content="msg.content" />
               <AssistantMessage v-else :content="msg.content" :is-loading="isAiMessageLoading(index, msg.role)" />
             </template>

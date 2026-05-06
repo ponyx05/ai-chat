@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import {
   getSessions,
   deleteSession as deleteSessionApi,
@@ -13,15 +13,27 @@ export const useChatStore = defineStore("chat", () => {
   const sessions = ref<Session[]>([]);
   const currentSessionId = ref<number | null>(null);
   const aiReplyingSessionId = ref<number | null>(null);
-  const messages = ref<Message[]>([]);
   const isLoading = ref(false);
   const isAIThinking = ref(false);
+
+  const currentSession = computed(() =>
+    sessions.value.find((s) => s.id === currentSessionId.value),
+  );
 
   const fetchSessions = async () => {
     isLoading.value = true;
     try {
       const res = await getSessions();
-      sessions.value = res.data.data;
+      sessions.value = res.data.data.map((session: Session) => {
+        const messages = sessions.value.find(
+          (item) => item.id === session.id,
+        )?.messages;
+        return {
+          ...session,
+          messages: messages || [],
+        };
+      });
+      console.log({ sessions: sessions.value });
     } finally {
       isLoading.value = false;
     }
@@ -29,29 +41,34 @@ export const useChatStore = defineStore("chat", () => {
 
   const selectSession = async (sessionId: number) => {
     currentSessionId.value = sessionId;
-    await fetchMessages(sessionId);
+    if (currentSession.value && currentSession.value.messages.length === 0) {
+      await fetchMessages(sessionId);
+    }
   };
 
-  const createNewSession = async () => {
+  const createNewSession = () => {
     currentSessionId.value = null;
-    messages.value = [];
   };
 
   const deleteSession = async (sessionId: number) => {
     await deleteSessionApi(sessionId);
-    sessions.value = sessions.value.filter((s) => s.id !== sessionId);
+    sessions.value = sessions.value.filter(
+      (sessioin) => sessioin.id !== sessionId,
+    );
     if (currentSessionId.value === sessionId) {
       currentSessionId.value = null;
-      messages.value = [];
     }
   };
 
   const updateSessionTitle = async (sessionId: number, title: string) => {
     const res = await updateSessionTitleApi(sessionId, title);
     const updatedSession = res.data.data;
-    const index = sessions.value.findIndex((s) => s.id === sessionId);
-    if (index !== -1) {
-      sessions.value[index] = updatedSession;
+    const session = sessions.value.find(
+      (sessioin) => sessioin.id === sessionId,
+    );
+    if (session) {
+      session.title = updatedSession.title;
+      session.updatedAt = updatedSession.updatedAt;
     }
   };
 
@@ -59,7 +76,12 @@ export const useChatStore = defineStore("chat", () => {
     isLoading.value = true;
     try {
       const res = await getMessagesApi(sessionId);
-      messages.value = res.data.data.data;
+      const session = sessions.value.find(
+        (sessioin) => sessioin.id === sessionId,
+      );
+      if (session) {
+        session.messages = res.data.data.data;
+      }
     } finally {
       isLoading.value = false;
     }
@@ -72,7 +94,7 @@ export const useChatStore = defineStore("chat", () => {
       content,
       createdAt: new Date().toISOString(),
     };
-    messages.value.push(userMessage);
+    currentSession.value?.messages.push(userMessage);
 
     aiReplyingSessionId.value = currentSessionId.value;
     isAIThinking.value = true;
@@ -83,7 +105,7 @@ export const useChatStore = defineStore("chat", () => {
       content: "",
       createdAt: new Date().toISOString(),
     };
-    messages.value.push(dummyAIMessage);
+    currentSession.value?.messages.push(dummyAIMessage);
 
     let sessionId = currentSessionId.value;
     let fullContent = "";
@@ -97,21 +119,26 @@ export const useChatStore = defineStore("chat", () => {
             if (chunk.includes("</think>")) {
               isAIThinking.value = false;
               // 清除临时占位
-              messages.value.splice(
-                messages.value.findIndex((item) => item.id === -1),
+              currentSession.value?.messages.splice(
+                currentSession.value.messages.findIndex(
+                  (item) => item.id === -1,
+                ),
                 1,
               );
             }
 
             fullContent += chunk;
 
-            const lastMsg = messages.value[messages.value.length - 1];
+            const lastMsg =
+              currentSession.value?.messages[
+                currentSession.value.messages.length - 1
+              ];
             if (lastMsg?.role === "assistant") {
               // 拿到引用，前端分片拼接关键
               lastMsg.content = fullContent;
             } else {
               // dummyAIMessage清除后进入此分支，添加AI回复Message后上面才能拿引用
-              messages.value.push({
+              currentSession.value?.messages.push({
                 id: Date.now(),
                 role: "assistant",
                 content: fullContent,
@@ -130,7 +157,8 @@ export const useChatStore = defineStore("chat", () => {
             const currentIdx = sessions.value.findIndex(
               (session) => session.id === sessionId,
             );
-            if (currentIdx > 0) await fetchSessions(); //更新排序
+            if (currentIdx > 0) await fetchSessions(); //更新会话列表排序
+            console.log({ currentSession: currentSession.value });
             resolve();
           },
           onError: (error) => {
@@ -150,8 +178,8 @@ export const useChatStore = defineStore("chat", () => {
   return {
     sessions,
     currentSessionId,
+    currentSession,
     aiReplyingSessionId,
-    messages,
     isLoading,
     isAIThinking,
     fetchSessions,

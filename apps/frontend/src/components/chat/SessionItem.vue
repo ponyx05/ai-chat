@@ -3,12 +3,9 @@ import { nextTick, ref } from 'vue'
 import { DeleteOutlined, MoreOutlined, EditOutlined } from '@ant-design/icons-vue'
 import { Modal } from 'ant-design-vue'
 import { InputRef } from 'ant-design-vue/es/vc-input/inputProps';
+import { Session } from '../../types/chat';
 
-interface Session {
-  id: number
-  title: string
-  updatedAt: string
-}
+
 
 const props = defineProps<{
   session: Session

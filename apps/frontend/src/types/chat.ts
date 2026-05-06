@@ -9,6 +9,7 @@ export interface Session {
   id: number
   title: string
   updatedAt: string
+  messages: Message[]
 }
 
 export interface SendMessageReq {
