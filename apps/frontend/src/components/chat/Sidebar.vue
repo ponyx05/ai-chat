@@ -39,7 +39,7 @@ const handleLogout = async () => {
     <div class="sidebar-header">
       <NewChatButton @new-chat="handleNewChat" />
     </div>
-    <SessionList @session-select="handleSessionSelect" @new-chat="handleNewChat" />
+    <SessionList @session-select="handleSessionSelect" />
     <UserFooter @logout="handleLogout" />
   </div>
 </template>

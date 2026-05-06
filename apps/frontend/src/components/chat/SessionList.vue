@@ -12,7 +12,6 @@ const currentSessionId = computed(() => chatStore.currentSessionId)
 
 const emit = defineEmits<{
   sessionSelect: [session: Session]
-  newChat: []
 }>()
 
 const loadSessions = async () => {
@@ -27,9 +26,6 @@ const handleSelect = async (session: Session) => {
 const handleDelete = async (id: number) => {
   try {
     await chatStore.deleteSession(id)
-    if (currentSessionId.value === id) {
-      chatStore.createNewSession()
-    }
     message.success('删除成功')
   } catch (error: any) {
     message.error(error.message || '删除失败')

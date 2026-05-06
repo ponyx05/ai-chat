@@ -2,7 +2,7 @@ import request, { type ApiResponse } from "./request";
 import type { Session, SendMessageReq, MessagesResponse } from "../types/chat";
 import { getToken } from "../utils";
 
-export interface SessionListResp {
+export interface NewSession {
   id: number;
   title: string;
   updatedAt: string;
@@ -10,6 +10,13 @@ export interface SessionListResp {
 
 export const getSessions = () => {
   return request.get<any, { data: ApiResponse<Session[]> }>("/chat/sessions");
+};
+
+export const createSession = (content: string) => {
+  return request.post<any, { data: ApiResponse<NewSession> }>(
+    "/chat/sessions",
+    { content },
+  );
 };
 
 export const deleteSession = (id: number) => {
@@ -33,7 +40,6 @@ export const getMessages = (sessionId: number) => {
 
 export interface SendMessageSSEOptions {
   onChunk: (content: string) => void;
-  onSession: (sessionId: number) => void;
   onDone: () => void;
   onError: (error: Error) => void;
 }
@@ -99,9 +105,6 @@ export const sendMessageSSE = (
 
           try {
             const eventData = JSON.parse(data);
-            if (eventType === "session") {
-              options.onSession(eventData.sessionId);
-            }
             if (eventType === "message") {
               options.onChunk(eventData.content);
             }

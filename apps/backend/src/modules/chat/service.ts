@@ -16,6 +16,11 @@ export async function getSessionList(userId: number) {
   return findSessionsByUserId(userId);
 }
 
+export async function createNewSession(userId: number, content: string) {
+  const title = content.slice(0, 10);
+  return createSession(userId, title);
+}
+
 export async function updateTitle(
   sessionId: number,
   userId: number,
@@ -62,11 +67,8 @@ export async function sendMessage(
   onChunk: (content: string) => Promise<void>,
 ): Promise<{
   sessionId: number;
-  isNewSession: boolean;
   assistantMessageId?: number;
 }> {
-  let isNewSession = false;
-
   if (sessionId) {
     const session = await findSessionById(sessionId);
     if (!session || session.userId !== userId) {
@@ -78,7 +80,6 @@ export async function sendMessage(
     const title = content.slice(0, 10);
     const session = await createSession(userId, title);
     sessionId = session.id;
-    isNewSession = true;
   }
 
   await createMessage(sessionId, "user", content);
@@ -109,7 +110,6 @@ export async function sendMessage(
 
   return {
     sessionId,
-    isNewSession,
     assistantMessageId: assistantMessage.id,
   };
 }

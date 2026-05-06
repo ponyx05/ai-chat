@@ -10,7 +10,7 @@ import ScrollToBottom from './ScrollToBottom.vue'
 import { useChatStore } from '../../store/chat'
 
 const chatStore = useChatStore()
-const { hasStartedChat } = storeToRefs(useChatStore())
+const { hasStartedChat, currentSessionId } = storeToRefs(useChatStore())
 
 const messageListRef = ref<HTMLElement | null>(null)
 const showScrollButton = ref(false)
@@ -35,11 +35,13 @@ const scrollToBottom = async () => {
 
 const handleNewChat = () => {
   hasStartedChat.value = false
-  chatStore.createNewSession()
+  currentSessionId.value = null
 }
 
 const handleSendMessage = async (content: string) => {
-
+  if (!hasStartedChat.value) {
+    await chatStore.createNewSession(content)
+  }
   if (isSending.value) return
   isSending.value = true
   try {

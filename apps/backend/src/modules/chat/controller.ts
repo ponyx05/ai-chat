@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import {
   getSessionList,
+  createNewSession,
   updateTitle,
   removeSession,
   getSessionMessages,
@@ -29,6 +30,28 @@ export async function getSessionListHandler(
         title: session.title,
         updatedAt: session.updatedAt,
       })),
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function createSessionHandler(
+  req: Request,
+  res: Response<ApiResponse<SessionData>>,
+  next: NextFunction,
+) {
+  try {
+    const { content } = req.body as { content: string };
+    const session = await createNewSession(req.user!.userId, content);
+    res.json({
+      code: 200,
+      message: "会话创建成功",
+      data: {
+        id: session.id,
+        title: session.title,
+        updatedAt: session.updatedAt,
+      },
     });
   } catch (error) {
     next(error);
@@ -117,22 +140,11 @@ export async function sendMessageHandler(
     res.setHeader("Connection", "keep-alive");
     res.flushHeaders();
 
-    const result = await sendMessage(
-      req.user!.userId,
-      content,
-      sessionId,
-      async (chunk) => {
-        res.write(
-          `event: message\ndata: ${JSON.stringify({ content: chunk })}\n\n`,
-        );
-      },
-    );
-
-    if (result.isNewSession) {
+    await sendMessage(req.user!.userId, content, sessionId, async (chunk) => {
       res.write(
-        `event: session\ndata: ${JSON.stringify({ sessionId: result.sessionId })}\n\n`,
+        `event: message\ndata: ${JSON.stringify({ content: chunk })}\n\n`,
       );
-    }
+    });
 
     res.end();
   } catch (error) {

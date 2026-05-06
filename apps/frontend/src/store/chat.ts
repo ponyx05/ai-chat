@@ -6,6 +6,7 @@ import {
   updateSessionTitle as updateSessionTitleApi,
   getMessages as getMessagesApi,
   sendMessageSSE,
+  createSession,
 } from "../apis/chat";
 import type { Message, Session } from "../types/chat";
 
@@ -50,8 +51,15 @@ export const useChatStore = defineStore("chat", () => {
     }
   };
 
-  const createNewSession = () => {
+  const createNewSession = async (content: string) => {
     currentSessionId.value = null;
+    try {
+      const res = await createSession(content);
+      await fetchSessions();
+      currentSessionId.value = res.data.data.id;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const deleteSession = async (sessionId: number) => {
@@ -148,11 +156,6 @@ export const useChatStore = defineStore("chat", () => {
                 createdAt: new Date().toISOString(),
               });
             }
-          },
-          onSession: async (newSessionId) => {
-            currentSessionId.value = newSessionId;
-            await fetchSessions();
-            resolve();
           },
           onDone: async () => {
             isAIThinking.value = false;
