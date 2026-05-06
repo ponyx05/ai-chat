@@ -1,7 +1,0 @@
-export { default as ChatView } from './ChatView.vue'
-export { default as ScrollToBottom } from './ScrollToBottom.vue'
-export { default as WelcomeView } from './WelcomeView.vue'
-export { default as Sidebar } from './Sidebar.vue'
-export { default as MessageBubble } from './MessageBubble.vue'
-export { default as AssistantMessage } from './AssistantMessage.vue'
-export { default as MessageInput } from './MessageInput.vue'

@@ -1,21 +1,14 @@
 <script setup lang="ts">
-interface Props {
-  visible: boolean
-}
+const modelValue = defineModel()
 
-defineProps<Props>()
 const emit = defineEmits<{
   scrollToBottom: []
 }>()
-
-const handleClick = () => {
-  emit('scrollToBottom')
-}
 </script>
 
 <template>
   <transition name="fade">
-    <button v-if="visible" class="scroll-to-bottom" @click="handleClick">
+    <button v-if="modelValue" class="scroll-to-bottom" @click=" emit('scrollToBottom')">
       ↓
     </button>
   </transition>
@@ -23,18 +16,16 @@ const handleClick = () => {
 
 <style scoped>
 .scroll-to-bottom {
-  position: absolute;
-  bottom: 80px;
-  right: 24px;
+  position: fixed;
+  bottom: 18%;
+  right: 44%;
   width: 40px;
   height: 40px;
   border-radius: 50%;
   background: #fff;
   border: 1px solid #e8e8e8;
+  font-size: 1.3em;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
   z-index: 100;
   transition: all 0.3s ease;

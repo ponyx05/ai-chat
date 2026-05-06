@@ -38,7 +38,7 @@ export const useChatStore = defineStore("chat", () => {
           messages: messages || [],
         };
       });
-      console.log({ sessions: sessions.value });
+      // console.log({ sessions: sessions.value });
     } finally {
       isLoading.value = false;
     }

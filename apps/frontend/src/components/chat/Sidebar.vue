@@ -1,46 +1,27 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import NewChatButton from './NewChatButton.vue'
 import SessionList from './SessionList.vue'
 import UserFooter from './UserFooter.vue'
-import { useAuthStore } from '../../store/auth'
-import { Session } from '../../types/chat'
 
 interface Props {
   username?: string
 }
 
 defineProps<Props>()
-
-const router = useRouter()
-const authStore = useAuthStore()
-
 const emit = defineEmits<{
   newChat: []
-  selectSession: [id: number]
+  selectSession: []
 }>()
 
-const handleNewChat = () => {
-  emit('newChat')
-}
-
-const handleSessionSelect = (session: Session) => {
-  emit('selectSession', session.id)
-}
-
-const handleLogout = async () => {
-  await authStore.logout()
-  router.push('/login')
-}
 </script>
 
 <template>
   <div class="sidebar">
     <div class="sidebar-header">
-      <NewChatButton @new-chat="handleNewChat" />
+      <NewChatButton @new-chat="emit('newChat')" />
     </div>
-    <SessionList @session-select="handleSessionSelect" />
-    <UserFooter @logout="handleLogout" />
+    <SessionList @session-select="emit('selectSession')" />
+    <UserFooter />
   </div>
 </template>
 

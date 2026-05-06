@@ -65,7 +65,7 @@ export const sendMessageSSE = (
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      console.log("建立流管道", { response });
+      // console.log("建立流管道", { response });
 
       const reader = response.body!.getReader();
       const decoder = new TextDecoder("utf-8"); //流式接口偏底层，需要自行处理网络传输的二进制分片

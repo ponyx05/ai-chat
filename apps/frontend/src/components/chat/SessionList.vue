@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { message } from 'ant-design-vue'
 import SessionItem from './SessionItem.vue'
 import { useChatStore } from '../../store/chat'
@@ -7,20 +7,15 @@ import type { Session } from '../../types/chat'
 
 const chatStore = useChatStore()
 
-const sessions = computed(() => chatStore.sessions)
-const currentSessionId = computed(() => chatStore.currentSessionId)
 
 const emit = defineEmits<{
-  sessionSelect: [session: Session]
+  sessionSelect: []
 }>()
 
-const loadSessions = async () => {
-  await chatStore.fetchSessions()
-}
 
 const handleSelect = async (session: Session) => {
   await chatStore.selectSession(session.id)
-  emit('sessionSelect', session)
+  emit('sessionSelect')
 }
 
 const handleDelete = async (id: number) => {
@@ -36,20 +31,23 @@ const handleUpdate = async (id: number, newTitle: string) => {
   await chatStore.updateSessionTitle(id, newTitle)
   message.success('更新成功')
 }
-
-defineExpose({
-  loadSessions
+watch(() => chatStore.sessions, () => {
+  if (!chatStore.sessions.length) return
+  chatStore.hasStartedChat = true
+  chatStore.currentSessionId = chatStore.sessions[0].id
+  chatStore.selectSession(chatStore.sessions[0].id)
 })
+
 </script>
 
 <template>
   <div class="session-list">
-    <div v-if="sessions.length === 0" class="empty">
+    <div v-if="chatStore.sessions.length === 0" class="empty">
       暂无会话
     </div>
     <template v-else>
-      <SessionItem v-for="session in sessions" :key="session.id" :session="session"
-        :is-active="session.id === currentSessionId" @select="handleSelect" @delete="handleDelete"
+      <SessionItem v-for="session in chatStore.sessions" :key="session.id" :session="session"
+        :is-active="session.id === chatStore.currentSessionId" @select="handleSelect" @delete="handleDelete"
         @rename="handleUpdate" />
     </template>
   </div>

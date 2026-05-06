@@ -37,7 +37,7 @@ const handleDeleteConfirm = async () => {
   deleteLoading.value = false
   deleteModalVisible.value = false
   if (props.session.id === currentSessionId.value) {
-    hasStartedChat.value = false//切换欢迎页面
+    hasStartedChat.value = false//删除当前选中的会话，切换至欢迎页面
   }
 }
 
