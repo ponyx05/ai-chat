@@ -4,6 +4,8 @@ import { DeleteOutlined, MoreOutlined, EditOutlined } from '@ant-design/icons-vu
 import { Modal } from 'ant-design-vue'
 import { InputRef } from 'ant-design-vue/es/vc-input/inputProps';
 import { Session } from '../../types/chat';
+import { storeToRefs } from 'pinia';
+import { useChatStore } from '../../store/chat';
 
 
 
@@ -24,6 +26,7 @@ const editInputRef = ref<InputRef>()
 const deleteModalVisible = ref(false)
 const deleteLoading = ref(false)
 
+const { hasStartedChat, currentSessionId } = storeToRefs(useChatStore())
 const showDeleteModal = () => {
   deleteModalVisible.value = true
 }
@@ -33,6 +36,9 @@ const handleDeleteConfirm = async () => {
   emit('delete', props.session.id)
   deleteLoading.value = false
   deleteModalVisible.value = false
+  if (props.session.id === currentSessionId.value) {
+    hasStartedChat.value = false//切换欢迎页面
+  }
 }
 
 const confirmEdit = () => {

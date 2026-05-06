@@ -13,6 +13,7 @@ export const useChatStore = defineStore("chat", () => {
   const sessions = ref<Session[]>([]);
   const currentSessionId = ref<number | null>(null);
   const aiReplyingSessionId = ref<number | null>(null);
+  const hasStartedChat = ref<boolean>(false); //控制是否展示欢迎页面
   const isLoading = ref(false);
   const isAIThinking = ref(false);
 
@@ -180,6 +181,7 @@ export const useChatStore = defineStore("chat", () => {
     currentSessionId,
     currentSession,
     aiReplyingSessionId,
+    hasStartedChat,
     isLoading,
     isAIThinking,
     fetchSessions,

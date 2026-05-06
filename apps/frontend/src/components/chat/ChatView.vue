@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted, onUnmounted, onUpdated, computed } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted, onUpdated } from 'vue'
+import { storeToRefs } from 'pinia'
 import Sidebar from './Sidebar.vue'
 import WelcomeView from './WelcomeView.vue'
 import MessageBubble from './MessageBubble.vue'
@@ -8,14 +9,13 @@ import MessageInput from './MessageInput.vue'
 import ScrollToBottom from './ScrollToBottom.vue'
 import { useChatStore } from '../../store/chat'
 
-
 const chatStore = useChatStore()
+const { hasStartedChat } = storeToRefs(useChatStore())
 
 const messageListRef = ref<HTMLElement | null>(null)
 const showScrollButton = ref(false)
 const isAtBottom = ref(true)
 const isSending = ref(false)
-const hasStartedChat = ref(false)
 
 const handleScroll = () => {
   if (!messageListRef.value) return
