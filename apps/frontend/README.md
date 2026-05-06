@@ -35,7 +35,7 @@ apps/frontend/
     │   └── index.ts         # 统一导出
     ├── components/          # 公共组件
     │   ├── ErrorProvider.vue # 全局错误处理
-    │   └── chat/             # 聊天组件（12个）
+    │   └── chat/             # 聊天组件（11个）
     │       ├── index.ts           # 统一导出
     │       ├── AssistantMessage.vue  # AI 消息气泡
     │       ├── ChatView.vue       # 主聊天视图

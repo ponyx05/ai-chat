@@ -106,6 +106,7 @@ OPENAI_MODEL=MiniMax-M2.7
 | 方法   | 路径                                   | 说明            |
 | ------ | -------------------------------------- | --------------- |
 | GET    | /api/chat/sessions                     | 获取会话列表    |
+| POST   | /api/chat/sessions                     | 创建会话        |
 | PUT    | /api/chat/sessions/:id                 | 修改会话标题    |
 | DELETE | /api/chat/sessions/:id                 | 删除会话        |
 | GET    | /api/chat/sessions/:sessionId/messages | 获取消息列表    |

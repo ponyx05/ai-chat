@@ -37,7 +37,43 @@ Authorization: Bearer <token>
 
 ---
 
-## 2. 修改会话标题
+## 2. 创建会话
+
+**POST** `/api/chat/sessions`
+
+**Headers**
+
+```
+Authorization: Bearer <token>
+```
+
+**请求体**
+
+```json
+{
+  "content": "你好，请帮我写一段代码" // 必填，用于生成标题
+}
+```
+
+**响应成功 (200)**
+
+```json
+{
+  "code": 200,
+  "message": "会话创建成功",
+  "data": {
+    "id": 1,
+    "title": "你好，请帮我",
+    "updatedAt": "2026-04-30T10:00:00.000Z"
+  }
+}
+```
+
+> 标题取 `content` 前10个字符
+
+---
+
+## 3. 修改会话标题
 
 **PUT** `/api/chat/sessions/:id`
 
@@ -73,7 +109,7 @@ Authorization: Bearer <token>
 
 ---
 
-## 3. 删除会话
+## 4. 删除会话
 
 **DELETE** `/api/chat/sessions/:id`
 
@@ -97,7 +133,7 @@ Authorization: Bearer <token>
 
 ---
 
-## 4. 获取会话消息
+## 5. 获取会话消息
 
 **GET** `/api/chat/sessions/:sessionId/messages`
 
@@ -146,7 +182,7 @@ Authorization: Bearer <token>
 
 ---
 
-## 5. 发送消息
+## 6. 发送消息
 
 **POST** `/api/chat/messages`
 
