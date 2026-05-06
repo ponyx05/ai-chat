@@ -126,6 +126,7 @@ export const useChatStore = defineStore("chat", () => {
           },
           onDone: async () => {
             isAIThinking.value = false;
+            aiReplyingSessionId.value = null;
             const currentIdx = sessions.value.findIndex(
               (session) => session.id === sessionId,
             );
