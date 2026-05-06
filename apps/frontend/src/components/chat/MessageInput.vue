@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { InputRef } from 'ant-design-vue/es/vc-input/inputProps';
 import { onMounted, ref } from 'vue'
 
 interface Props {

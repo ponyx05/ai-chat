@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted, onUnmounted, onUpdated } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted, onUpdated, computed } from 'vue'
 import Sidebar from './Sidebar.vue'
 import WelcomeView from './WelcomeView.vue'
 import MessageBubble from './MessageBubble.vue'
@@ -51,6 +51,11 @@ const handleSendMessage = async (content: string) => {
   }
 }
 
+const isAiMessageLoading = (index: number, role: string) => {
+  return chatStore.aiReplyingSessionId === chatStore.currentSessionId && index === chatStore.messages.length - 1 && role === 'assistant' && chatStore.isAIThinking
+}
+
+
 watch(() => chatStore.messages.length, () => {
   nextTick(() => {
     if (isAtBottom.value) {
@@ -62,6 +67,9 @@ watch(() => chatStore.messages.length, () => {
 })
 
 onUpdated(() => {
+  console.log('onUpdated');
+  // console.log({ sessionAI: chatStore.sessions });
+
   messageListRef.value?.scrollTo({
     top: messageListRef.value.scrollHeight,
   })
@@ -73,6 +81,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  // 退出登录清除滚动监听
   messageListRef.value && messageListRef.value.removeEventListener('scroll', handleScroll)
 })
 </script>
@@ -90,8 +99,7 @@ onUnmounted(() => {
           <div ref="messageListRef" class="message-list">
             <template v-for="(msg, index) in chatStore.messages" :key="msg.id">
               <MessageBubble v-if="msg.role === 'user'" :content="msg.content" />
-              <AssistantMessage v-else :content="msg.content"
-                :is-loading="index === chatStore.messages.length - 1 && msg.role === 'assistant' && chatStore.isAIThinking" />
+              <AssistantMessage v-else :content="msg.content" :is-loading="isAiMessageLoading(index, msg.role)" />
             </template>
           </div>
           <ScrollToBottom :visible="showScrollButton" @scroll-to-bottom="scrollToBottom" />

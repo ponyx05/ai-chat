@@ -12,6 +12,7 @@ import type { Message, Session } from "../types/chat";
 export const useChatStore = defineStore("chat", () => {
   const sessions = ref<Session[]>([]);
   const currentSessionId = ref<number | null>(null);
+  const aiReplyingSessionId = ref<number | null>(null);
   const messages = ref<Message[]>([]);
   const isLoading = ref(false);
   const isAIThinking = ref(false);
@@ -73,6 +74,7 @@ export const useChatStore = defineStore("chat", () => {
     };
     messages.value.push(userMessage);
 
+    aiReplyingSessionId.value = currentSessionId.value;
     isAIThinking.value = true;
     // 回复加载状态依赖messages中最后一项且为ai回复的数据，因此添加占位数据，维持加载状态
     const dummyAIMessage: Message = {
@@ -147,6 +149,7 @@ export const useChatStore = defineStore("chat", () => {
   return {
     sessions,
     currentSessionId,
+    aiReplyingSessionId,
     messages,
     isLoading,
     isAIThinking,
