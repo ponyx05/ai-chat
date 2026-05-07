@@ -1,6 +1,6 @@
 # Backend
 
-后端子工程，基于 Express + MariaDB + TypeScript 构建的 AI 聊天应用后端 API 服务。
+后端子工程，基于 Express + MySQL + TypeScript 构建的 AI 聊天应用后端 API 服务。
 
 ## 技术栈
 
@@ -8,7 +8,7 @@
 | ---------- | ------------ |
 | Node.js    | 运行时       |
 | Express    | Web 框架     |
-| MariaDB    | 关系型数据库 |
+| MySQL      | 关系型数据库 |
 | Prisma     | ORM 框架     |
 | JWT        | Token 认证   |
 | bcryptjs   | 密码加密     |
