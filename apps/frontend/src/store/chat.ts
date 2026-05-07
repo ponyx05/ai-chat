@@ -19,7 +19,7 @@ export const useChatStore = defineStore("chat", () => {
   const isAIThinking = ref(false);
 
   const currentSession = computed(() =>
-    sessions.value.find((s) => s.id === currentSessionId.value),
+    sessions.value.find((session) => session.id === currentSessionId.value),
   );
   const aiReplyingSession = computed(() =>
     sessions.value.find((item) => item.id === aiReplyingSessionId.value),

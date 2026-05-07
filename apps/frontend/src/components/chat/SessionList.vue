@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue'
+import { computed, nextTick, onMounted, watch } from 'vue'
 import { message } from 'ant-design-vue'
 import SessionItem from './SessionItem.vue'
 import { useChatStore } from '../../store/chat'
@@ -31,11 +31,16 @@ const handleUpdate = async (id: number, newTitle: string) => {
   await chatStore.updateSessionTitle(id, newTitle)
   message.success('更新成功')
 }
-watch(() => chatStore.sessions, () => {
+
+// 第一次进入页面自动选中第一项
+watch(() => chatStore.sessions, async () => {
+  await nextTick()
   if (!chatStore.sessions.length) return
   chatStore.hasStartedChat = true
   chatStore.currentSessionId = chatStore.sessions[0].id
   chatStore.selectSession(chatStore.sessions[0].id)
+}, {
+  once: true
 })
 
 </script>

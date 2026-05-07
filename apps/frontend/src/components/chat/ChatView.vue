@@ -15,15 +15,8 @@ const { hasStartedChat, currentSessionId } = storeToRefs(useChatStore())
 const messageListRef = ref<HTMLElement>()
 const showScrollButton = ref(false)
 const isAtBottom = ref(true)
-const shouldScroll = ref(false)//AI回复时是否自动滚动到底部
-
-const handleScroll = () => {
-  if (!messageListRef.value) return
-  shouldScroll.value = false
-  const { scrollTop, scrollHeight, clientHeight } = messageListRef.value
-  isAtBottom.value = scrollHeight - scrollTop - clientHeight < 100
-  showScrollButton.value = !isAtBottom.value
-}
+const shouldScroll = ref(false)
+const isInitialLoad = ref(true)//由于hasStartedChat默认为false页面首次渲染不渲染messageList，onMounted拿不到ref实例，所以需要该状态控制首次滚动。
 
 const scrollToBottom = async () => {
   await nextTick()
@@ -61,45 +54,49 @@ const isAiMessageLoading = (index: number, role: string) => {
   return chatStore.aiReplyingSessionId === chatStore.currentSessionId && index === (chatStore.currentSession?.messages.length ?? 0) - 1 && role === 'assistant' && chatStore.isAIThinking
 }
 
+const handleScroll = () => {
+  if (!messageListRef.value) return
+  const { scrollTop, scrollHeight, clientHeight } = messageListRef.value
+  isAtBottom.value = scrollHeight - scrollTop - clientHeight < 100
+  showScrollButton.value = !isAtBottom.value
+}
+
+watch(() => currentSessionId.value, () => {
+  isInitialLoad.value = true
+})
+
+const handleWheel = () => {
+  shouldScroll.value = false
+}
+
+const handleScrollButton = () => {
+  shouldScroll.value = true
+  scrollToBottom()
+}
+
 onUpdated(() => {
-
-})
-
-// 页面先展示欢迎页，因此onMounted拿不到实例ref
-watch(messageListRef, (newEle, _oldEle) => {
-  // Vue底层调用effect此时ref实例还没渲染，因此oldEle为undefined，选择session后。newEle得到实例ref。
-
-  if (newEle) {
-    console.log({ scrollTop: messageListRef.value!.scrollTop, scrollHeight: messageListRef.value!.scrollHeight });
-
-    messageListRef.value!.scrollTop = messageListRef.value?.scrollHeight as number
-    messageListRef.value?.addEventListener('scroll', handleScroll)
+  messageListRef.value?.removeEventListener('wheel', handleWheel)
+  messageListRef.value?.removeEventListener('scroll', handleScroll)
+  messageListRef.value?.addEventListener('wheel', handleWheel)
+  messageListRef.value?.addEventListener('scroll', handleScroll)
+  if (isInitialLoad.value && messageListRef.value) {
+    messageListRef.value.scrollTo({
+      top: messageListRef.value.scrollHeight,
+    })
+    isInitialLoad.value = false
   }
-  if (!newEle) {
-    messageListRef.value?.removeEventListener('scroll', handleScroll)
-  }
-}, {
-  deep: true
-})
-
-// AI回复的自动滚动到底部
-watch(() => chatStore.currentSession?.messages, async () => {
-  if (!chatStore.isAIThinking) {
-    shouldScroll.value = false
-  }
-  if (shouldScroll.value) {
-    console.log({ message: chatStore.currentSession?.messages });
+  if (shouldScroll.value && messageListRef.value) {
     scrollToBottom()
   }
-}, {
-  deep: true
 })
+
 
 onMounted(async () => {
   await chatStore.fetchSessions()
 })
 onUnmounted(() => {
   messageListRef.value?.removeEventListener('scroll', handleScroll)
+  messageListRef.value?.removeEventListener('wheel', handleWheel)
 })
 </script>
 
@@ -119,7 +116,7 @@ onUnmounted(() => {
               <AssistantMessage v-else :content="msg.content" :is-loading="isAiMessageLoading(index, msg.role)" />
             </template>
           </div>
-          <ScrollToBottom v-model="showScrollButton" @scroll-to-bottom="scrollToBottom" />
+          <ScrollToBottom v-model="showScrollButton" @scroll-to-bottom="handleScrollButton" />
           <div class="message-container">
             <MessageInput placeholder="有问题，尽管问" :disabled="chatStore.isAIThinking" @send="handleSendMessage" />
           </div>
