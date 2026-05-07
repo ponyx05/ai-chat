@@ -17,6 +17,7 @@ export const useChatStore = defineStore("chat", () => {
   const hasStartedChat = ref<boolean>(false); //控制是否展示欢迎页面
   const isLoading = ref(false);
   const isAIThinking = ref(false);
+  const isAIReplying = ref(false);
 
   const currentSession = computed(() =>
     sessions.value.find((session) => session.id === currentSessionId.value),
@@ -120,6 +121,7 @@ export const useChatStore = defineStore("chat", () => {
     aiReplyingSession.value?.messages.push(dummyAIMessage);
 
     let fullContent = "";
+    isAIReplying.value = true;
 
     await new Promise<void>((resolve, reject) => {
       sendMessageSSE(
@@ -158,7 +160,7 @@ export const useChatStore = defineStore("chat", () => {
             }
           },
           onDone: async () => {
-            isAIThinking.value = false;
+            isAIReplying.value = false;
             const currentIdx = sessions.value.findIndex(
               (session) => session.id === aiReplyingSessionId.value,
             );
@@ -168,6 +170,7 @@ export const useChatStore = defineStore("chat", () => {
             resolve();
           },
           onError: (error) => {
+            isAIReplying.value = false;
             reject(error);
           },
         },
@@ -187,6 +190,7 @@ export const useChatStore = defineStore("chat", () => {
     hasStartedChat,
     isLoading,
     isAIThinking,
+    isAIReplying,
     fetchSessions,
     selectSession,
     createNewSession,

@@ -1,16 +1,59 @@
 <script setup lang="ts">
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
+import { onMounted, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useChatStore } from '../../store/chat'
 
 interface Props {
   content: string
   timestamp?: string
   isLoading?: boolean
 }
+const { isAIReplying } = storeToRefs(useChatStore())
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   isLoading: false
 })
+
+
+const rawContent = ref('')    // 真实完整内容
+const showContent = ref('')   // 显示内容
+let timer: number | undefined = undefined
+
+// 监听内容变化
+watch(
+  () => props.content,
+  (newVal) => {
+    if (!newVal) return
+    rawContent.value = newVal
+
+    // 只有 AI 正在回复时，才用打字机
+    if (isAIReplying.value) {
+      startTypeWriter()
+    } else {
+      // 历史消息：直接全部显示
+      showContent.value = newVal
+    }
+  },
+  { immediate: true }
+)
+
+// 打字机
+function startTypeWriter() {
+  clearTimeout(timer)
+  const tick = () => {
+    const total = rawContent.value.length
+    const current = showContent.value.length
+
+    if (current < total) {
+      showContent.value = rawContent.value.slice(0, current + 1)
+      timer = setTimeout(tick, 16)
+    }
+  }
+  tick()
+}
+
 
 const md: MarkdownIt = new MarkdownIt({
   html: false,
@@ -34,17 +77,17 @@ const renderMarkdown = (content: string): string | void => {
   if (!content) return
   let result = ''
 
-  result = content.split('</think>\n\n')[1]
-  if (!result) content.split('</think>')[1]
+  result = content.split('</think>\n\n')[1] || content.split('</think>')[1]
   if (!result) return//说明还没思考完进入该if
 
+  console.log({ result });
   return md.render(result)
 }
 </script>
 
 <template>
   <div class="assistant-message">
-    <div class="message-content" v-html="renderMarkdown(content)"></div>
+    <div class="message-content" v-html="renderMarkdown(showContent)"></div>
     <div v-if="isLoading" class="loading-indicator">
       <span class="dot"></span>
       <span class="dot"></span>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, watch } from 'vue'
+import { nextTick, watch } from 'vue'
 import { message } from 'ant-design-vue'
 import SessionItem from './SessionItem.vue'
 import { useChatStore } from '../../store/chat'
