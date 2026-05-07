@@ -51,8 +51,7 @@ apps/frontend/
     ├── pages/               # 页面组件
     │   ├── Login.vue        # 登录页
     │   ├── Register.vue     # 注册页
-    │   ├── Home.vue         # 首页
-    │   └── ChangePassword.vue  # 修改密码页
+    │   └── Home.vue         # 首页
     ├── router/              # 路由配置
     │   └── index.ts         # 路由配置 + 守卫
     ├── store/               # 状态管理
