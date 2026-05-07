@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useChatStore } from '../../store/chat'
 
