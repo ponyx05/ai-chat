@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { storeToRefs } from 'pinia';
+import { nextTick, ref, watch } from 'vue'
+import { useChatStore } from '../../store/chat';
 
 interface Props {
   placeholder?: string
@@ -16,6 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const inputValue = ref('')
+const { currentSessionId } = storeToRefs(useChatStore())
 
 const handleSend = () => {
   const content = inputValue.value.trim()
@@ -25,9 +28,10 @@ const handleSend = () => {
 }
 
 const textareaRef = ref<HTMLTextAreaElement>()
-onMounted(() => {
+watch(() => currentSessionId.value, async () => {
+  await nextTick()
   textareaRef.value?.focus()
-})
+}, { immediate: true })
 </script>
 
 <template>
