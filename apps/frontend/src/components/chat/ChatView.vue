@@ -23,7 +23,7 @@ const scrollToBottom = async () => {
   if (messageListRef.value && messageListRef.value.scrollHeight) {
     messageListRef.value.scrollTo({
       top: messageListRef.value.scrollHeight,
-      behavior: 'smooth'
+      behavior: 'instant'
     })
   }
 }
