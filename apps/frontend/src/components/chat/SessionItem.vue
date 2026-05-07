@@ -81,7 +81,7 @@ const handleClick = () => {
     <a-dropdown trigger="click" @click.stop>
       <MoreOutlined class="more-icon" />
       <template #overlay>
-        <a-menu style="min-width: 150px;" @select="handleMenuSelect">
+        <a-menu style="min-width: 150px;" @click="handleMenuSelect">
           <a-menu-item key="edit">
             <EditOutlined /> 重命名
           </a-menu-item>
