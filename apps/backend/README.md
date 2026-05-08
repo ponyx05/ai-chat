@@ -68,18 +68,23 @@ apps/backend/
 创建 `.env` 文件，配置以下变量：
 
 ```env
-# 数据库连接
+# 服务端端口号
+PORT=4000
+# your-secret-key-change-in-production
+JWT_SECRET='fooAI'
+
+# Prisma数据库连接
+# TEST_DATABASE_NAME=ai_chat_test
+DATABASE_URL="mysql://root:123456@localhost:3306/ai_chat_db"
+
 DATABASE_HOST=localhost
 DATABASE_PORT=3306
 DATABASE_USER=root
 DATABASE_PASSWORD=123456
-DATABASE_NAME=ai_chat_test
+DATABASE_NAME=ai_chat_db
 
-# JWT 密钥
-JWT_SECRET=your-secret-key
-
-# AI 模型配置（MiniMax 兼容 OpenAI API）
-OPENAI_API_KEY=your-api-key
+# OpenAI
+OPENAI_API_KEY=sk-cp-Mxa5q1xqsxImO0kCFIUtr0F71m-RQjdClTtWPz_mhf4tH_pG5POBSD6dcL0z-RNLSypJmggpIP7gc7hM4k5php-7NKFG2NXPPahNvG4NGf75y1ZpSnos2jI
 OPENAI_BASE_URL=https://api.minimaxi.com/v1
 OPENAI_MODEL=MiniMax-M2.7
 ```
