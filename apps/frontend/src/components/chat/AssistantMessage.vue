@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useChatStore } from '../../store/chat'
 
@@ -17,6 +17,10 @@ const props = withDefaults(defineProps<Props>(), {
   isLoading: false
 })
 
+const shouldTypeWriter = computed(() => {
+  return currentSessionId.value === aiReplyingSessionId.value && isAIReplying.value && props.messageId === aiReplyingSession.value?.messages[aiReplyingSession.value?.messages.length - 1].id
+})
+
 
 const rawContent = ref('')    // 真实完整内容
 const showContent = ref('')   // 显示内容
@@ -30,7 +34,7 @@ watch(
     rawContent.value = newVal
 
     // 只有 AI 正在回复时，才用打字机
-    if (currentSessionId.value === aiReplyingSessionId.value && isAIReplying.value && props.messageId === aiReplyingSession.value?.messages[aiReplyingSession.value?.messages.length - 1].id) {
+    if (shouldTypeWriter.value) {
       startTypeWriter()
     } else {
       // 历史消息：直接全部显示
