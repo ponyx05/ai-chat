@@ -30,21 +30,17 @@ export async function createStreamingChat(messages: ChatMessage[]) {
     throw new Error("OPENAI_API_KEY 未配置或无效，请配置真实的 API Key");
   }
 
-  /** 
-   * 模型的系统提示词
-   * message:[{
-      "role": "system",
-      "name": "MiniMax AI"
-      "content":""
-    }],
-   */
+  const systemPrompt = process.env.SYSTEM_PROMPT || "";
   const response = await openai.chat.completions.create({
     model: process.env.OPENAI_MODEL as string,
-    messages: messages.map((message) => ({
-      role: message.role,
-      content: message.content,
-      ...(message.name ? { name: message.name } : {}),
-    })),
+    messages: [
+      { role: "system", content: systemPrompt },
+      ...messages.map((message) => ({
+        role: message.role,
+        content: message.content,
+        ...(message.name ? { name: message.name } : {}),
+      })),
+    ],
     stream: true,
     temperature: 0.3,
   });
