@@ -85,7 +85,7 @@ const renderMarkdown = (content: string): string | void => {
   result = content.split('</think>\n\n')[1] || content.split('</think>')[1]
   if (!result) return//说明还没思考完进入该if
 
-  console.log({ result });
+  // console.log({ result });
   return md.render(result)
 }
 </script>

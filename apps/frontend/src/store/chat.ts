@@ -16,8 +16,8 @@ export const useChatStore = defineStore("chat", () => {
   const aiReplyingSessionId = ref<number | null>(null);
   const hasStartedChat = ref<boolean>(false); //控制是否展示欢迎页面
   const isLoading = ref(false);
-  const isAIThinking = ref(false);
-  const isAIReplying = ref(false);
+  const isAIThinking = ref(false); //控制AI回复的加载状态
+  const isAIReplying = ref(false); //控制打字机效果
 
   const currentSession = computed(() =>
     sessions.value.find((session) => session.id === currentSessionId.value),
@@ -139,7 +139,6 @@ export const useChatStore = defineStore("chat", () => {
                 1,
               );
             }
-
             fullContent += chunk;
 
             const lastMsg =
@@ -171,6 +170,7 @@ export const useChatStore = defineStore("chat", () => {
           },
           onError: (error) => {
             isAIReplying.value = false;
+            isAIThinking.value = false;
             reject(error);
           },
         },
