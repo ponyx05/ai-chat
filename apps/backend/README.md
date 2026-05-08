@@ -21,12 +21,13 @@
 apps/backend/
 ├── package.json            # 项目配置
 ├── tsconfig.json           # TypeScript 配置
-├── jest.config.ts         # Jest 测试配置
+├── jest.config.ts          # Jest 测试配置
 ├── prisma/
 │   └── schema.prisma       # Prisma 数据模型
 └── src/
     ├── index.ts            # 启动入口
     ├── app.ts              # Express 应用入口
+    ├── types/              # 类型定义
     ├── lib/                # 库文件
     │   └── prisma.ts       # Prisma 客户端实例
     ├── middleware/          # 中间件
@@ -37,12 +38,16 @@ apps/backend/
     │   │   ├── controller.ts    # 控制层：HTTP 请求处理
     │   │   ├── routes.ts        # 路由层：API 路由定义
     │   │   ├── service.ts       # 业务层：核心业务逻辑
+    │   │   ├── types/           # 类型定义
+    │   │   │   └── user.ts      # 用户类型
     │   │   └── user.repository.ts   # 数据层：用户 DB 操作
     │   ├── chat/           # 聊天模块
     │   │   ├── controller.ts  # 控制层
     │   │   ├── routes.ts      # 路由层
     │   │   ├── service.ts     # 业务层
     │   │   ├── ai.service.ts   # AI 服务
+    │   │   ├── types/          # 类型定义
+    │   │   │   └── chat.ts    # 聊天类型
     │   │   └── repository.ts  # 数据层
     ├── utils/              # 工具函数
     │   ├── jwt.ts

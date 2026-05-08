@@ -28,6 +28,7 @@ apps/frontend/
     ├── App.vue              # 根组件
     ├── env.d.ts             # Vue 类型声明
     ├── eventBus.ts          # 事件总线
+    ├── assets/              # 静态资源（空目录）
     ├── apis/                # API 接口层
     │   ├── request.ts       # axios 封装
     │   ├── auth.ts          # 认证 API

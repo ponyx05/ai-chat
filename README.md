@@ -7,7 +7,8 @@
 ## 目录结构
 
 - `apps/frontend/` - 前端工程（Vue 3 + Vite + TypeScript）
-- `apps/backend/` - 后端工程（Express + TypeScript + Prisma + Mysql）
+- `apps/backend/` - 后端工程（Express + TypeScript + Prisma + MariaDB）
+- `docs/api/` - API接口文档
 
 ## 环境
 
