@@ -6,11 +6,12 @@ import { storeToRefs } from 'pinia'
 import { useChatStore } from '../../store/chat'
 
 interface Props {
-  content: string
+  content: string,
+  messageId: number,
   timestamp?: string
   isLoading?: boolean
 }
-const { isAIReplying } = storeToRefs(useChatStore())
+const { isAIReplying, currentSessionId, aiReplyingSessionId, aiReplyingSession } = storeToRefs(useChatStore())
 
 const props = withDefaults(defineProps<Props>(), {
   isLoading: false
@@ -29,7 +30,7 @@ watch(
     rawContent.value = newVal
 
     // 只有 AI 正在回复时，才用打字机
-    if (isAIReplying.value) {
+    if (currentSessionId.value === aiReplyingSessionId.value && isAIReplying.value && props.messageId === aiReplyingSession.value?.messages[aiReplyingSession.value?.messages.length - 1].id) {
       startTypeWriter()
     } else {
       // 历史消息：直接全部显示

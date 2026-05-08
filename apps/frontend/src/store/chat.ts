@@ -186,6 +186,7 @@ export const useChatStore = defineStore("chat", () => {
     sessions,
     currentSessionId,
     currentSession,
+    aiReplyingSession,
     aiReplyingSessionId,
     hasStartedChat,
     isLoading,

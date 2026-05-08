@@ -113,7 +113,8 @@ onUnmounted(() => {
           <div ref="messageListRef" class="message-list">
             <template v-for="(msg, index) in chatStore.currentSession?.messages" :key="msg.id">
               <MessageBubble v-if="msg.role === 'user'" :content="msg.content" />
-              <AssistantMessage v-else :content="msg.content" :is-loading="isAiMessageLoading(index, msg.role)" />
+              <AssistantMessage v-else :content="msg.content" :messageId="msg.id"
+                :is-loading="isAiMessageLoading(index, msg.role)" />
             </template>
           </div>
           <ScrollToBottom v-model="showScrollButton" @scroll-to-bottom="handleScrollButton" />
