@@ -17,6 +17,7 @@ nodejs v22.15.0
 pnpm 包管理器
 
 根目录下执行统一安装前后端依赖 pnpm i 
+
 backend生成Prisma客户端 npx prisma generate 
 
 ## env配置
