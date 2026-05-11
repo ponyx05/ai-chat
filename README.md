@@ -1,3 +1,14 @@
+<!-- Keep these links. Translations will automatically update with the README. -->
+[Deutsch](https://zdoc.app/de/ponyx05/ai-chat) | 
+[English](https://zdoc.app/en/ponyx05/ai-chat) | 
+[Español](https://zdoc.app/es/ponyx05/ai-chat) | 
+[français](https://zdoc.app/fr/ponyx05/ai-chat) | 
+[日本語](https://zdoc.app/ja/ponyx05/ai-chat) | 
+[한국어](https://zdoc.app/ko/ponyx05/ai-chat) | 
+[Português](https://zdoc.app/pt/ponyx05/ai-chat) | 
+[Русский](https://zdoc.app/ru/ponyx05/ai-chat) | 
+[中文](https://zdoc.app/zh/ponyx05/ai-chat)
+
 # AI Chat Monorepo
 
 ## 项目简介
