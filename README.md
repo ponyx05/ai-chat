@@ -1,3 +1,5 @@
+<div align="center">
+  
 <!-- Keep these links. Translations will automatically update with the README. -->
 [Deutsch](https://zdoc.app/de/ponyx05/ai-chat) | 
 [English](https://zdoc.app/en/ponyx05/ai-chat) | 
@@ -8,6 +10,8 @@
 [Português](https://zdoc.app/pt/ponyx05/ai-chat) | 
 [Русский](https://zdoc.app/ru/ponyx05/ai-chat) | 
 [中文](https://zdoc.app/zh/ponyx05/ai-chat)
+
+</div>
 
 # AI Chat Monorepo
 
