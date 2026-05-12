@@ -112,20 +112,20 @@ onUnmounted(() => {
   <div class="chat-view">
     <Sidebar ref="sidebarRef" @new-chat="handleNewChat" @select-session="handleSelectSession" />
     <div class="main-content">
+      <header>
+        <div class="action" style="margin-left: 20px;">
+          <MenuOutlined class="button" @click="sidebarRef?.toggleCollapse" />
+        </div>
+        <div class="title">
+          <span>{{ chatStore.currentSession?.title || '新会话' }}</span>
+        </div>
+      </header>
       <WelcomeView v-if="!hasStartedChat" @send="handleSendMessage" />
       <template v-else>
         <div v-if="chatStore.isLoading" class="loading-container">
           <a-spin size="large" />
         </div>
         <template v-else>
-          <div class="topBar">
-            <div class="action" style="margin-left: 20px;">
-              <MenuOutlined class="button" @click="sidebarRef?.toggleCollapse" />
-            </div>
-            <div class="title">
-              <span>{{ chatStore.currentSession?.title }}</span>
-            </div>
-          </div>
           <div ref="messageListRef" class="message-list">
             <template v-for="(msg, index) in chatStore.currentSession?.messages" :key="msg.id">
               <MessageBubble v-if="msg.role === 'user'" :content="msg.content" />
@@ -185,23 +185,23 @@ onUnmounted(() => {
   align-items: center;
 }
 
-.topBar {
-  height: 50px;
-  border-bottom: 1px solid #e8e8e8;
+.main-content header {
   display: flex;
   align-items: center;
+  min-height: 50px;
+  border-bottom: 1px solid #e8e8e8;
 }
 
-.topBar .action .button {
+.main-content header .action .button {
   padding: 5px 5px;
   border-radius: 20%;
 }
 
-.topBar .action .button:hover {
+.main-content header .action .button:hover {
   background: #f2f2f2;
 }
 
-.topBar .title {
+.main-content header .title {
   min-width: 150px;
   margin: 0 auto;
 }
