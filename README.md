@@ -1,3 +1,18 @@
+<div align="center">
+  
+<!-- Keep these links. Translations will automatically update with the README. -->
+[Deutsch](https://zdoc.app/de/ponyx05/ai-chat) | 
+[English](https://zdoc.app/en/ponyx05/ai-chat) | 
+[Español](https://zdoc.app/es/ponyx05/ai-chat) | 
+[français](https://zdoc.app/fr/ponyx05/ai-chat) | 
+[日本語](https://zdoc.app/ja/ponyx05/ai-chat) | 
+[한국어](https://zdoc.app/ko/ponyx05/ai-chat) | 
+[Português](https://zdoc.app/pt/ponyx05/ai-chat) | 
+[Русский](https://zdoc.app/ru/ponyx05/ai-chat) | 
+[中文](https://zdoc.app/zh/ponyx05/ai-chat)
+
+</div>
+
 # AI Chat Monorepo
 
 ## 项目简介
@@ -13,10 +28,12 @@
 ## 环境
 
 nodejs v22.15.0
+
 pnpm 包管理器
 
-pnpm i 根目录下安装依赖  
-npx prisma generate backend生成Prisma客户端
+根目录下执行统一安装前后端依赖 pnpm i 
+
+backend生成Prisma客户端 npx prisma generate 
 
 ## env配置
 
