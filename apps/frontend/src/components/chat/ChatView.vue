@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted, onUnmounted, onUpdated } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted, onUpdated, useTemplateRef } from 'vue'
 import { storeToRefs } from 'pinia'
 import Sidebar from './Sidebar.vue'
 import WelcomeView from './WelcomeView.vue'
@@ -8,6 +8,7 @@ import AssistantMessage from './AssistantMessage.vue'
 import MessageInput from './MessageInput.vue'
 import ScrollToBottom from './ScrollToBottom.vue'
 import { useChatStore } from '../../store/chat'
+import { MenuOutlined } from "@ant-design/icons-vue";
 
 const chatStore = useChatStore()
 const { hasStartedChat, currentSessionId } = storeToRefs(useChatStore())
@@ -90,6 +91,10 @@ onUpdated(() => {
   }
 })
 
+// 控制侧边栏折叠功能
+const sidebarRef = useTemplateRef('sidebarRef')
+
+
 
 onMounted(async () => {
   await chatStore.fetchSessions()
@@ -102,7 +107,7 @@ onUnmounted(() => {
 
 <template>
   <div class="chat-view">
-    <Sidebar @new-chat="handleNewChat" @select-session="handleSelectSession" />
+    <Sidebar ref="sidebarRef" @new-chat="handleNewChat" @select-session="handleSelectSession" />
     <div class="main-content">
       <WelcomeView v-if="!hasStartedChat" @send="handleSendMessage" />
       <template v-else>
@@ -110,6 +115,14 @@ onUnmounted(() => {
           <a-spin size="large" />
         </div>
         <template v-else>
+          <div class="topBar">
+            <div class="action" style="margin-left: 20px;">
+              <MenuOutlined class="button" @click="sidebarRef?.toggleCollapse" />
+            </div>
+            <div class="title">
+              <span>{{ chatStore.currentSession?.title }}</span>
+            </div>
+          </div>
           <div ref="messageListRef" class="message-list">
             <template v-for="(msg, index) in chatStore.currentSession?.messages" :key="msg.id">
               <MessageBubble v-if="msg.role === 'user'" :content="msg.content" />
@@ -136,8 +149,8 @@ onUnmounted(() => {
 }
 
 .main-content {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   overflow: hidden;
   position: relative;
@@ -146,7 +159,7 @@ onUnmounted(() => {
 .message-list {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 24px 100px 24px;
+  padding: 10px 100px 70px 100px;
 }
 
 .message-container {
@@ -159,5 +172,26 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.topBar {
+  height: 50px;
+  border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  align-items: center;
+}
+
+.topBar .action .button {
+  padding: 5px 5px;
+  border-radius: 20%;
+}
+
+.topBar .action .button:hover {
+  background: #f2f2f2;
+}
+
+.topBar .title {
+  min-width: 150px;
+  margin: 0 auto;
 }
 </style>

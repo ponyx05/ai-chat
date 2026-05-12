@@ -19,6 +19,7 @@ declare module "@ant-design/icons-vue" {
     rotate?: number | string;
     component?: FunctionalComponent<HTMLAttributes & VNodeHTMLAttributes>;
   }
+  export const MenuOutlined: FunctionalComponent<IconProps>;
   export const MoreOutlined: FunctionalComponent<IconProps>;
   export const EditOutlined: FunctionalComponent<IconProps>;
   export const UpOutlined: FunctionalComponent<IconProps>;
