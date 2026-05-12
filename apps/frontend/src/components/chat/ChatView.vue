@@ -78,6 +78,8 @@ const handleScrollButton = () => {
 onUpdated(() => {
   messageListRef.value?.removeEventListener('wheel', handleWheel)
   messageListRef.value?.removeEventListener('scroll', handleScroll)
+  messageListRef.value?.removeEventListener('touchmove', handleWheel)
+  messageListRef.value?.addEventListener('touchmove', handleWheel)
   messageListRef.value?.addEventListener('wheel', handleWheel)
   messageListRef.value?.addEventListener('scroll', handleScroll)
   if (isInitialLoad.value && messageListRef.value) {
@@ -102,6 +104,7 @@ onMounted(async () => {
 onUnmounted(() => {
   messageListRef.value?.removeEventListener('scroll', handleScroll)
   messageListRef.value?.removeEventListener('wheel', handleWheel)
+  messageListRef.value?.removeEventListener('touchmove', handleWheel)
 })
 </script>
 
@@ -160,6 +163,14 @@ onUnmounted(() => {
   flex: 1;
   overflow-y: auto;
   padding: 10px 100px 70px 100px;
+}
+
+@media (max-width:768px) {
+  .message-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 10px 70px 10px;
+  }
 }
 
 .message-container {

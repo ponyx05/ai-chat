@@ -19,7 +19,7 @@ defineProps<Props>()
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin: 8px 0;
+  margin: 1em 0;
 }
 
 .bubble-content {

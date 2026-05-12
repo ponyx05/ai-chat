@@ -110,7 +110,7 @@ const renderMarkdown = (content: string): string | void => {
 }
 
 .message-content {
-  max-width: 80%;
+  max-width: 100%;
   line-height: 1.6;
   word-break: break-word;
 }
