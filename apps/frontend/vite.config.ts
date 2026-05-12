@@ -7,9 +7,10 @@ export default defineConfig({
   build: {
     outDir: "dist",
   },
-  esbuild: {
-    drop: ["console"],
-  },
+  // 打包开启该配置
+  // esbuild: {
+  //   drop: ["console"],
+  // },
   server: {
     port: 3000,
     proxy: {

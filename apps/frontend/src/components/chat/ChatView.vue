@@ -51,7 +51,7 @@ const handleSelectSession = () => {
 }
 
 const isAiMessageLoading = (index: number, role: string) => {
-  return chatStore.aiReplyingSessionId === chatStore.currentSessionId && index === (chatStore.currentSession?.messages.length ?? 0) - 1 && role === 'assistant' && chatStore.isAIThinking
+  return chatStore.aiReplyingSessionId === chatStore.currentSessionId && index === chatStore.currentSession?.messages.length! - 1 && role === 'assistant' && chatStore.isAIThinking
 }
 
 const handleScroll = () => {

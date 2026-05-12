@@ -102,6 +102,7 @@ export const useChatStore = defineStore("chat", () => {
 
   const sendMessage = async (content: string) => {
     aiReplyingSessionId.value = currentSessionId.value;
+
     const userMessage: Message = {
       id: Date.now(),
       role: "user",
@@ -109,11 +110,11 @@ export const useChatStore = defineStore("chat", () => {
       createdAt: new Date().toISOString(),
     };
     aiReplyingSession.value?.messages.push(userMessage);
-
     isAIThinking.value = true;
+
     // 回复加载状态依赖messages中最后一项且为ai回复的数据，因此添加占位数据，维持加载状态
     const dummyAIMessage: Message = {
-      id: -1,
+      id: Date.now(),
       role: "assistant",
       content: "",
       createdAt: new Date().toISOString(),
@@ -129,27 +130,25 @@ export const useChatStore = defineStore("chat", () => {
         {
           onChunk: (chunk) => {
             // console.log({ chunk });
-            if (chunk.includes("</think>")) {
-              isAIThinking.value = false;
-              // 清除临时占位
-              aiReplyingSession.value?.messages.splice(
-                aiReplyingSession.value.messages.findIndex(
-                  (item) => item.id === -1,
-                ),
-                1,
-              );
-            }
             fullContent += chunk;
 
             const lastMsg =
               aiReplyingSession.value?.messages[
                 aiReplyingSession.value.messages.length - 1
               ];
+
+            // 当AI返回内容时再关闭加载状态
+            if (
+              lastMsg?.content.split("</think>\n\n")[1] ||
+              lastMsg?.content.split("</think>")[1]
+            ) {
+              isAIThinking.value = false;
+            }
+
             if (lastMsg?.role === "assistant") {
               // 拿到引用，前端分片拼接关键
               lastMsg.content = fullContent;
             } else {
-              // dummyAIMessage清除后进入此分支，添加AI回复Message后上面才能拿引用
               aiReplyingSession.value?.messages.push({
                 id: Date.now(),
                 role: "assistant",
@@ -165,7 +164,7 @@ export const useChatStore = defineStore("chat", () => {
             );
             if (currentIdx > 0) await fetchSessions(); //更新会话列表排序
             aiReplyingSessionId.value = null;
-            console.log({ currentSession: currentSession.value });
+            // console.log({ currentSession: currentSession.value });
             resolve();
           },
           onError: (error) => {
