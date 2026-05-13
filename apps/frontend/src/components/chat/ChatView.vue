@@ -113,7 +113,7 @@ onUnmounted(() => {
     <Sidebar ref="sidebarRef" @new-chat="handleNewChat" @select-session="handleSelectSession" />
     <div class="main-content">
       <header>
-        <div class="action" style="margin-left: 20px;">
+        <div class="action">
           <MenuOutlined class="button" @click="sidebarRef?.toggleCollapse" />
         </div>
         <div class="title">
@@ -186,10 +186,15 @@ onUnmounted(() => {
 }
 
 .main-content header {
-  display: flex;
-  align-items: center;
   min-height: 50px;
+  line-height: 50px;
+  text-align: center;
   border-bottom: 1px solid #e8e8e8;
+}
+
+.main-content header .action {
+  position: absolute;
+  left: 1em;
 }
 
 .main-content header .action .button {
@@ -203,6 +208,5 @@ onUnmounted(() => {
 
 .main-content header .title {
   min-width: 150px;
-  margin: 0 auto;
 }
 </style>
