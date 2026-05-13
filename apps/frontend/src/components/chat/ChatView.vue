@@ -52,7 +52,7 @@ const handleSelectSession = () => {
 }
 
 const isAiMessageLoading = (index: number, role: string) => {
-  return chatStore.aiReplyingSessionId === chatStore.currentSessionId && index === chatStore.currentSession?.messages.length! - 1 && role === 'assistant' && chatStore.isAIThinking
+  return chatStore.aiReplyingSessionId === chatStore.currentSessionId && index === chatStore.currentSession?.messages.length! - 1 && role === 'assistant' && chatStore.isAIReplying
 }
 
 const handleScroll = () => {
@@ -135,7 +135,7 @@ onUnmounted(() => {
           </div>
           <ScrollToBottom v-model="showScrollButton" @scroll-to-bottom="handleScrollButton" />
           <div class="message-container">
-            <MessageInput placeholder="有问题，尽管问" :disabled="chatStore.isAIThinking" @send="handleSendMessage" />
+            <MessageInput placeholder="有问题，尽管问" :disabled="chatStore.isAIReplying" @send="handleSendMessage" />
           </div>
         </template>
       </template>

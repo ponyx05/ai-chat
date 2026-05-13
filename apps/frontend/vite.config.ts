@@ -1,16 +1,19 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [vue()],
   base: "./",
   build: {
     outDir: "dist",
   },
   // 打包开启该配置
-  // esbuild: {
-  //   drop: ["console"],
-  // },
+  esbuild:
+    command === "build"
+      ? {
+          drop: ["console"],
+        }
+      : {},
   server: {
     port: 3000,
     proxy: {
@@ -20,4 +23,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
